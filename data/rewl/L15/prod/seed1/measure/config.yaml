@@ -1,0 +1,113 @@
+# REWL L=15 PRODUCTION (FSS series). Window layout = validated
+# profile2 (deep-GS truncated, 2.5 eV floor so no over-confinement
+# freeze; band GS+65..120 well inside range; converged to a clean
+# stitch, overlap std 0.19, Tc 485.3, latent 46.9). Production recipe:
+# flatness + f_continuous + multiple 50, full convergence (1e-12).
+# Too long for one 24 h slot -> chain with `rewl resume --extra-cycles N`
+# (plain `rewl resume` no-ops until the resume cycle-count fix lands).
+random_seed: 1
+
+system:
+  n_sc: 15
+  ce: paircut9_5_5_ardr_n96
+
+windows:
+  energy_spacing: 0.1
+  list:
+    - [-117905.0, -117902.5, 2]
+    - [-117903.8, -117901.2, 2]
+    - [-117902.5, -117899.9, 2]
+    - [-117901.2, -117898.6, 2]
+    - [-117899.9, -117897.2, 2]
+    - [-117898.5, -117895.8, 2]
+    - [-117897.2, -117894.4, 2]
+    - [-117895.8, -117893.0, 2]
+    - [-117894.4, -117891.5, 2]
+    - [-117892.9, -117890.0, 2]
+    - [-117891.5, -117888.5, 2]
+    - [-117890.0, -117887.0, 2]
+    - [-117888.5, -117885.4, 2]
+    - [-117887.0, -117883.8, 2]
+    - [-117885.4, -117882.2, 2]
+    - [-117883.8, -117880.6, 2]
+    - [-117882.2, -117878.9, 2]
+    - [-117880.5, -117877.2, 2]
+    - [-117878.9, -117875.5, 2]
+    - [-117877.2, -117873.7, 2]
+    - [-117875.4, -117871.9, 2]
+    - [-117873.7, -117870.1, 2]
+    - [-117871.9, -117868.2, 2]
+    - [-117870.1, -117866.3, 2]
+    - [-117868.2, -117864.4, 2]
+    - [-117866.3, -117862.5, 2]
+    - [-117864.4, -117860.5, 2]
+    - [-117862.4, -117858.5, 2]
+    - [-117860.5, -117856.4, 2]
+    - [-117858.4, -117854.3, 2]
+    - [-117856.4, -117852.2, 2]
+    - [-117854.3, -117850.0, 2]
+    - [-117852.2, -117847.8, 2]
+    - [-117850.0, -117845.6, 2]
+    - [-117847.8, -117843.3, 2]
+    - [-117845.5, -117841.0, 2]
+    - [-117843.3, -117838.6, 2]
+    - [-117841.0, -117836.2, 2]
+    - [-117838.6, -117833.8, 2]
+    - [-117836.2, -117831.3, 2]
+    - [-117833.8, -117828.8, 2]
+    - [-117831.3, -117826.2, 2]
+    - [-117828.7, -117823.6, 2]
+    - [-117826.2, -117820.9, 2]
+    - [-117823.6, -117818.2, 2]
+    - [-117820.9, -117815.5, 2]
+    - [-117818.2, -117812.7, 2]
+    - [-117815.4, -117809.8, 2]
+    - [-117812.6, -117806.9, 2]
+    - [-117809.8, -117804.0, 2]
+    - [-117806.9, -117801.0, 2]
+    - [-117803.9, -117797.9, 2]
+    - [-117800.9, -117794.8, 2]
+    - [-117797.9, -117791.7, 2]
+    - [-117794.8, -117788.5, 2]
+    - [-117791.6, -117785.2, 2]
+    - [-117788.4, -117781.9, 2]
+    - [-117785.2, -117778.5, 2]
+    - [-117781.8, -117775.0, 2]
+
+wl:
+  flatness_limit: 0.8
+  fill_factor_limit: 1.0e-12
+  schedule: "1_over_t"
+  one_over_t_gate: "flatness"
+  one_over_t_entry: "f_continuous"
+  bp_stall_multiple: 50.0
+  flatness_mode: "per_walker"
+  merge_cadence: "at_halve"
+  n_trials_per_walker: 200000000
+  block_size_sweeps: 10
+  trajectory_write_interval_sweeps: 100
+
+moves:
+  - {type: pair_swap, weight: 0.1}
+  - {type: row_shift, weight: 0.2}
+  - {type: motif_shift, weight: 0.5}
+  - {type: chain_swap, weight: 0.5}
+  - {type: row_reflect, weight: 0.5}
+  - {type: cell_reflect, weight: 0.001}
+
+config_search:
+  n_workers: 16
+  window_search_penalty: 2.0
+  walk_sweeps: 50
+  max_walks_per_window: 20
+
+checkpoint:
+  filename: rewl_state.h5
+  interval_cycles: 20
+
+measurement:
+  checkpoint_filename: meas_state.h5
+  observer_interval: 13500         # 1 sweep (n_atoms = 4 x 15^3)
+  n_measure_cycles: 500
+  checkpoint_interval_cycles: 50
+  ops: [chi_11, closest_chi, closest_sim, icoh_global, icoh_nn, oof_amp, cis_frac, nbo4f2_frac, collinear_ff, chirality, circ_coherence]

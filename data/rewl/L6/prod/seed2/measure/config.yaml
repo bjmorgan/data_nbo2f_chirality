@@ -1,0 +1,72 @@
+# REWL L=6 PRODUCTION at 0.05 energy spacing (5 seeds, fixed). The finer
+# grid resolves L6's narrow (~1.2 eV) coexistence band so the equal-area
+# T_c converges robustly; the 0.1 grid is too coarse for the saddle
+# iteration on this weak transition (the value agrees, but the finder is
+# marginal). Equal-area T_c is the uniform FSS estimator, so L6 stays on
+# the finer grid. Recipe: flatness + f_continuous + multiple 50; the
+# measurement section drives the frozen-g pass after convergence.
+
+random_seed: 2
+
+system:
+  n_sc: 6
+  ce: paircut9_5_5_ardr_n96
+
+windows:
+  energy_spacing: 0.05
+  list:
+    - [-7548.0, -7547.0, 4]
+    - [-7547.5, -7546.5, 4]
+    - [-7547.0, -7546.0, 4]
+    - [-7546.5, -7545.5, 4]
+    - [-7546.0, -7545.0, 4]
+    - [-7545.5, -7544.5, 4]
+    - [-7545.0, -7544.0, 4]
+    - [-7544.5, -7542.5, 4]
+    - [-7543.5, -7542.0, 4]
+    - [-7543.0, -7540.0, 4]
+    - [-7542.0, -7537.0, 4]
+    - [-7539.0, -7531.0, 4]
+    - [-7535.0, -7525.0, 4]
+    - [-7530.0, -7520.0, 4]
+    - [-7525.0, -7510.0, 4]
+    - [-7517.5, -7495.5, 4]
+
+wl:
+  flatness_limit: 0.8
+  fill_factor_limit: 1.0e-12
+  schedule: "1_over_t"
+  one_over_t_gate: "flatness"
+  one_over_t_entry: "f_continuous"
+  bp_stall_multiple: 50.0
+  flatness_mode: "per_walker"
+  merge_cadence: "at_halve"
+  n_trials_per_walker: 20000000
+  block_size_sweeps: 10
+  trajectory_write_interval_sweeps: 100
+
+moves:
+  - {type: pair_swap, weight: 0.1}
+  - {type: row_shift, weight: 0.2}
+  - {type: motif_shift, weight: 0.5}
+  - {type: chain_swap, weight: 0.5}
+  - {type: row_reflect, weight: 0.5}
+  - {type: cell_reflect, weight: 0.001}
+
+config_search:
+  n_workers: 16                    # null -> library default (os.cpu_count())
+  window_search_penalty: 2.0       # into-window penalty-walk bias (higher = stronger)
+  walk_sweeps: 50                  # MC sweeps per confined walk (x n_atoms = steps)
+  max_walks_per_window: 20         # walks per window; must be >= largest walker count
+
+checkpoint:
+  filename: rewl_state.h5
+  interval_cycles: 1000
+
+
+measurement:
+  checkpoint_filename: meas_state.h5
+  observer_interval: 864          # 1 sweep (n_atoms steps)
+  n_measure_cycles: 500
+  checkpoint_interval_cycles: 10
+  ops: [chi_11, closest_chi, closest_sim, icoh_global, icoh_nn, oof_amp, cis_frac, nbo4f2_frac, collinear_ff, chirality, circ_coherence]

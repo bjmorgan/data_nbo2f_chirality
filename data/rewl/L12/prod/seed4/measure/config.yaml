@@ -1,0 +1,101 @@
+# REWL L=12 PRODUCTION run (FSS series). Final recipe: flatness gate +
+# f_continuous 1/t entry + bp_stall_multiple 50. Window layout from the
+# L12 profiling run (width ~ sqrt(halving rate), equal-halving-balanced:
+# w4-w46 all converged to 17 halvings at 1e-5). GS-edge w0-w3 (the
+# profiling laggards, width-clamped at 1.5 eV) reinforced to 4 walkers.
+# Full convergence (1e-12): too long for one 24 h slot -> checkpoint every
+# 100 cycles and resubmit the job to resume until converged.
+random_seed: 4
+
+system:
+  n_sc: 12
+  ce: paircut9_5_5_ardr_n96
+
+windows:
+  energy_spacing: 0.1
+  list:
+    - [-60383.0, -60381.5, 4]
+    - [-60382.2, -60380.8, 4]
+    - [-60381.5, -60380.0, 4]
+    - [-60380.8, -60379.2, 4]
+    - [-60380.0, -60378.5, 2]
+    - [-60379.2, -60377.8, 2]
+    - [-60378.5, -60377.0, 2]
+    - [-60377.8, -60376.2, 2]
+    - [-60377.0, -60375.5, 2]
+    - [-60376.2, -60374.8, 2]
+    - [-60375.5, -60374.0, 2]
+    - [-60374.8, -60373.2, 2]
+    - [-60374.0, -60372.2, 2]
+    - [-60373.1, -60371.1, 2]
+    - [-60372.1, -60370.0, 2]
+    - [-60371.1, -60368.8, 2]
+    - [-60369.9, -60367.4, 2]
+    - [-60368.7, -60366.0, 2]
+    - [-60367.3, -60364.5, 2]
+    - [-60365.9, -60362.9, 2]
+    - [-60364.4, -60361.2, 2]
+    - [-60362.8, -60359.4, 2]
+    - [-60361.1, -60357.5, 2]
+    - [-60359.3, -60355.5, 2]
+    - [-60357.4, -60353.5, 2]
+    - [-60355.4, -60351.5, 2]
+    - [-60353.5, -60349.4, 2]
+    - [-60351.4, -60347.0, 2]
+    - [-60349.2, -60344.4, 2]
+    - [-60346.8, -60341.8, 2]
+    - [-60344.3, -60339.3, 2]
+    - [-60341.8, -60336.7, 2]
+    - [-60339.3, -60334.2, 2]
+    - [-60336.7, -60331.7, 2]
+    - [-60334.2, -60329.2, 2]
+    - [-60331.7, -60326.6, 2]
+    - [-60329.1, -60323.9, 2]
+    - [-60326.5, -60321.1, 2]
+    - [-60323.8, -60318.3, 2]
+    - [-60321.1, -60315.5, 2]
+    - [-60318.3, -60312.7, 2]
+    - [-60315.5, -60309.6, 2]
+    - [-60312.6, -60306.7, 2]
+    - [-60309.6, -60303.7, 2]
+    - [-60306.7, -60300.8, 2]
+    - [-60303.7, -60297.7, 2]
+    - [-60300.7, -60297.0, 2]
+
+wl:
+  flatness_limit: 0.8
+  fill_factor_limit: 1.0e-12
+  schedule: "1_over_t"
+  one_over_t_gate: "flatness"
+  one_over_t_entry: "f_continuous"
+  bp_stall_multiple: 50.0
+  flatness_mode: "per_walker"
+  merge_cadence: "at_halve"
+  n_trials_per_walker: 100000000
+  block_size_sweeps: 10
+  trajectory_write_interval_sweeps: 100
+
+moves:
+  - {type: pair_swap, weight: 0.1}
+  - {type: row_shift, weight: 0.2}
+  - {type: motif_shift, weight: 0.5}
+  - {type: chain_swap, weight: 0.5}
+  - {type: row_reflect, weight: 0.5}
+  - {type: cell_reflect, weight: 0.001}
+
+config_search:
+  n_workers: 16
+  window_search_penalty: 2.0
+  walk_sweeps: 50
+  max_walks_per_window: 20
+
+checkpoint:
+  filename: rewl_state.h5
+  interval_cycles: 100
+
+measurement:
+  checkpoint_filename: meas_state.h5
+  observer_interval: 6912          # 1 sweep (n_atoms)
+  n_measure_cycles: 500
+  checkpoint_interval_cycles: 1
+  ops: [chi_11, closest_chi, closest_sim, icoh_global, icoh_nn, oof_amp, cis_frac, nbo4f2_frac, collinear_ff, chirality, circ_coherence]

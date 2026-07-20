@@ -1,0 +1,86 @@
+# REWL L=9 multi-walker production run (seed ensemble).
+#
+# Windows concentrate resolution on the coexistence region
+# (phase peaks at -25463.2 / -25455.5 eV, saddle at -25458.9 eV,
+# from the 2025-05 L9 run): 2 eV windows stepped by 1 eV (50%
+# overlap) with 4 walkers each. Wings use 50%-overlapped windows
+# with graduated widths and 2 walkers. Top edge -25433.0 eV is the
+# proven-reachable ceiling from the previous run; not extended
+# because the physical maximum CE energy is unknown and
+# unreachable bins would stall the top window.
+random_seed: 5
+
+system:
+  n_sc: 9
+  ce: paircut9_5_5_ardr_n96
+
+windows:
+  energy_spacing: 0.1
+  list:
+    # Ground-state wing: 1 eV windows, 0.5 eV step (50% overlap).
+    - [-25474.0, -25473.0, 2]
+    - [-25473.5, -25472.5, 2]
+    - [-25473.0, -25472.0, 2]
+    - [-25472.5, -25471.5, 2]
+    - [-25472.0, -25471.0, 2]
+    - [-25471.5, -25470.5, 2]
+    - [-25471.0, -25470.0, 2]
+    # Transition: 2 eV windows, 1 eV step.
+    - [-25470.5, -25468.5, 2]
+    - [-25469.5, -25467.5, 2]
+    - [-25468.5, -25466.5, 2]
+    - [-25467.5, -25465.5, 2]
+    # Coexistence region: 2 eV windows, 1 eV step, 4 walkers.
+    - [-25466.5, -25464.5, 4]
+    - [-25465.5, -25463.5, 4]
+    - [-25464.5, -25462.5, 4]
+    - [-25463.5, -25461.5, 4]
+    - [-25462.5, -25460.5, 4]
+    - [-25461.5, -25459.5, 4]
+    - [-25460.5, -25458.5, 4]
+    - [-25459.5, -25457.5, 4]
+    - [-25458.5, -25456.5, 4]
+    - [-25457.5, -25455.5, 4]
+    - [-25456.5, -25454.5, 4]
+    - [-25455.5, -25453.5, 4]
+    - [-25454.5, -25452.5, 4]
+    # High-energy wing: graduated widths, overlap = 50% of the
+    # narrower neighbour.
+    - [-25453.5, -25450.5, 2]
+    - [-25452.0, -25448.0, 2]
+    - [-25450.0, -25445.0, 2]
+    - [-25447.5, -25442.5, 2]
+    - [-25445.0, -25439.0, 2]
+    - [-25442.0, -25436.0, 2]
+    - [-25439.0, -25433.0, 2]
+
+wl:
+  flatness_limit: 0.8
+  fill_factor_limit: 1.0e-12
+  schedule: "1_over_t"
+  one_over_t_gate: "flatness"
+  one_over_t_entry: "f_continuous"
+  bp_stall_multiple: 50.0
+  flatness_mode: "per_walker"
+  merge_cadence: "at_halve"
+  n_trials_per_walker: 50000000
+  block_size_sweeps: 10
+  trajectory_write_interval_sweeps: 100
+
+moves:
+  - {type: pair_swap, weight: 0.1}
+  - {type: row_shift, weight: 0.2}
+  - {type: motif_shift, weight: 0.5}
+  - {type: chain_swap, weight: 0.5}
+  - {type: row_reflect, weight: 0.5}
+  - {type: cell_reflect, weight: 0.001}
+
+config_search:
+  n_workers: 16                    # null -> library default (os.cpu_count())
+  window_search_penalty: 2.0       # into-window penalty-walk bias (higher = stronger)
+  walk_sweeps: 50                  # MC sweeps per confined walk (x n_atoms = steps)
+  max_walks_per_window: 20         # walks per window; must be >= largest walker count
+
+checkpoint:
+  filename: rewl_state.h5
+  interval_cycles: 1000

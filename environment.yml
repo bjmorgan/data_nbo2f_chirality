@@ -1,0 +1,25 @@
+# Environment used to validate this bundle: from it, `make` regenerates every
+# deposited-era CSV bit-for-bit. Minor dependency drift will not change any
+# result but may perturb the last floating-point digit; pin as below for exact
+# reproduction. Python comes from conda; the rest are pinned from PyPI so the
+# versions are explicit (icet is also available on conda-forge if a prebuilt
+# binary is preferred -- move the `icet==3.2` line up into the conda section).
+name: nbo2f-chirality
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.3
+  - pip
+  - pip:
+      - numpy==2.3.5
+      - pandas==2.2.3
+      - scipy==1.17.1
+      - matplotlib==3.10.7
+      - ase==3.28.0
+      - icet==3.2                # ships the `mchammer` package too
+      - mchammer-pt==0.27.1      # reweight/stitch CLIs + coexistence analysis
+      - figure_formatting @ git+https://github.com/bjmorgan/figure_formatting.git@bca05929c29ae6ee3ccb21101833f7eb6e203cd9
+
+# The REWL finite-size-scaling spine (this bundle's current contents) needs only
+# the above. The CE workflow and the DFT/structure figures, added later, will
+# also require nbo2f_analysis, chainorder and mchammer-moves (pinned then).
