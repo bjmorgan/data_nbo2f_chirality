@@ -1,15 +1,19 @@
-"""PT run with BUSS-style committee uncertainty tracking.
+"""Active learning: propose high-uncertainty structures by BUSS.
 
-Runs parallel tempering on NbO2F at a configurable cell size with
-per-replica CommitteeUncertaintyObservers attached via ProcessPool's
-``attach_observer_factory``. After the run, retrieves worker-side
-stashes via ``get_observers``, deduplicates against each other and
-the existing training set, and writes diverse candidates for DFT
-validation with chainorder diagnostics. Also writes the lowest-energy
-final structure for active learning.
+Runs parallel tempering on NbO2F with per-replica committee-uncertainty
+observers (see ``committee_observer.py``) attached via ProcessPool's
+``attach_observer_factory``. After the run it retrieves the worker-side stashes,
+deduplicates the highest-variance configurations against each other and the
+existing training set, and writes diverse candidates for DFT validation with
+chain-order diagnostics, plus the lowest-energy final structure.
 
-Usage:
-    python pt_buss.py [--ce CE] [--n-sc 6] [--start random]
+The committee is built by ``build_posterior_committee.py``. Multiple rounds/seeds
+are run by repeating with different ``--seed``.
+
+    python active_learning.py [--n-sc 6] [--start ordered]
+
+Runnable to reproduce a round of structure proposals; not part of the `make`
+figure pipeline, and the downstream DFT relaxations run externally.
 """
 from __future__ import annotations
 
@@ -31,17 +35,11 @@ from mchammer_pt import CanonicalParallelTempering
 from mchammer_moves import CustomCanonicalEnsemble, PairSwap
 from mchammer.calculators import ClusterExpansionCalculator
 
-from chain_geometry import RowShift, MotifShift
-from bootstrap_committee import (
-    CommitteeObserverFactory,
-    CommitteeUncertaintyObserver,
-    load_committee,
-)
-from ce_tools import (
+from nbo2f_analysis.chain_geometry import RowShift, MotifShift
+from nbo2f_analysis.ce_tools import (
     TEMPERATURES_K,
     _TRANS_PAIRS,
     _f_mask_from_atoms,
-    _resolve_ce_path,
     atoms_from_f_mask,
     atoms_from_f_mask_stable,
     load_ce,
@@ -51,6 +49,15 @@ from ce_tools import (
     tile_f_mask,
 )
 from chainorder import SublatticeOccupation, order_params
+
+from committee_observer import CommitteeObserverFactory, load_committee
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[1]
+DEFAULT_CE = REPO / "data" / "ce" / "paircut9_5_5_ardr_n96.ce"
+DEFAULT_COMMITTEE = REPO / "build" / "ce" / "posterior_committee.npz"
+DEFAULT_TRAINING = REPO / "data" / "ce" / "training_set_refitB_n96.json"
+OUT_DIR = REPO / "build" / "active_learning"
 
 MIN_HAMMING = 20
 MAX_CANDIDATES = 8
@@ -194,18 +201,17 @@ def _greedy_diverse_selection(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--ce", type=str, default=None)
+    parser.add_argument("--ce", type=str, default=str(DEFAULT_CE))
     parser.add_argument("--n-sc", type=int, default=6)
     parser.add_argument(
         "--start", choices=["ordered", "random"], default="random",
     )
     parser.add_argument(
-        "--committee", type=str, default=None,
-        help="Path to committee .npz (default: committee_<ce_stem>.npz)",
+        "--committee", type=str, default=str(DEFAULT_COMMITTEE),
+        help="Path to committee .npz (from build_posterior_committee.py).",
     )
     parser.add_argument(
-        "--training-json", type=str,
-        default=str(Path(__file__).parent / "training_set_refitB.json"),
+        "--training-json", type=str, default=str(DEFAULT_TRAINING),
     )
     parser.add_argument(
         "--moves", choices=["pairswap", "combined"], default="combined",
@@ -238,6 +244,7 @@ def main() -> None:
         "initial configuration.",
     )
     args = parser.parse_args()
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     n_sc = args.n_sc
     n_cation = n_sc**3
@@ -250,12 +257,10 @@ def main() -> None:
 
     observe_interval = args.observe_interval or block_size
 
-    ce_path = _resolve_ce_path(args.ce)
+    ce_path = Path(args.ce)
     ce = load_ce(ce_path)
 
-    committee_path = Path(args.committee) if args.committee else (
-        Path(__file__).parent / f"committee_{ce_path.stem}.npz"
-    )
+    committee_path = Path(args.committee)
     committee_params = load_committee(committee_path)
     n_committee = committee_params.shape[0]
     print(f"Committee: {n_committee} models from {committee_path.name}")
@@ -389,7 +394,7 @@ def main() -> None:
     # Persist per-snapshot committee-std observations.
     obs_df = pd.concat(long_rows, ignore_index=True)
     obs_csv = (
-        Path.cwd()
+        OUT_DIR
         / f"pt_buss_observations_{ce_path.stem}_N{n_sc}_{args.start}_seed{args.seed}.csv"
     )
     obs_df.to_csv(obs_csv, index=False)
@@ -402,7 +407,7 @@ def main() -> None:
     best_E = final_energies[best_r]
     best_mask = _occ_to_f_mask(final_occs[best_r], n_sc)
     best_atoms = atoms_from_f_mask(n_sc, best_mask)
-    best_path = Path.cwd() / f"buss_N{n_sc}_{args.start}_seed{args.seed}_lowest_energy.vasp"
+    best_path = OUT_DIR / f"buss_N{n_sc}_{args.start}_seed{args.seed}_lowest_energy.vasp"
     write(best_path, best_atoms, format="vasp", direct=True)
     diag = _chainorder_diagnostics(best_mask, n_sc)
     print(f"\nLowest-energy structure: T={best_T:.0f} K, "
@@ -421,7 +426,7 @@ def main() -> None:
 
     # Persist the full per-replica stash for offline inspection.
     stash_dir = (
-        Path.cwd()
+        OUT_DIR
         / f"buss_stash_{ce_path.stem}_N{n_sc}_{args.start}_seed{args.seed}"
     )
     stash_dir.mkdir(exist_ok=True)
@@ -462,7 +467,7 @@ def main() -> None:
     print(f"Selected {len(selected)} diverse candidates")
 
     # Write candidates with chainorder diagnostics.
-    out_dir = Path.cwd()
+    out_dir = OUT_DIR
     if selected:
         print()
         print(f"{'#':>2}  {'std (meV)':>10}  {'T (K)':>7}  "

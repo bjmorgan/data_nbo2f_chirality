@@ -23,8 +23,10 @@ dependencies:
       - chainorder==0.2.0                                     # PyPI == tag v0.2.0
       - nbo2f_analysis @ git+https://github.com/bjmorgan/nbo2f_analysis.git@5782decd2768ae40defe1121086bc9aecbb1ef63
       - hofmann==0.20.0                                       # renders the structure figures
+      # Cluster-expansion methods scripts (methods/cluster_expansion/):
+      - scikit-learn==1.6.1      # ARDR fit + posterior committee
+      - trainstation==1.1        # cross-validation for hyperparameter selection
+      - mchammer-moves==0.6.0    # custom moves for the active-learning PT run
 
 # Before the final DOI, the two git-pinned deps want proper releases:
 #   figure_formatting, nbo2f_analysis -- not on PyPI; tag + Zenodo.
-# mchammer-moves is not needed to build anything here -- only to re-run the
-# PT/BUSS active-learning scripts in workflow/pt/.
