@@ -24,7 +24,7 @@ from mchammer_pt.analysis.coexistence import equal_area_temperature
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
-DATA = REPO / "data" / "rewl"          # deposited primitives (read-only)
+DATA = REPO / "data" / "rewl"          # deposited data files (read-only)
 BUILD = REPO / "build" / "rewl"        # regenerated products (this pipeline)
 SIZES = (6, 9, 12, 15)
 SEEDS = range(1, 6)

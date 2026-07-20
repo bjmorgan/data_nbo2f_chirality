@@ -3,9 +3,10 @@
 Data and analysis code for the replica-exchange Wang-Landau (REWL) finite-size
 scaling study of the chirality-emergence transition in NbO2F.
 
-Given the deposited density-of-states primitives and the pinned environment,
-`make` regenerates every downstream quantity — canonical observables, the
-per-run coexistence-temperature estimators, the extrapolated `T_c(inf)`, and the
+Given the deposited data files — the stitched density of states and the
+microcanonical observable moments — and the pinned environment, `make`
+regenerates every downstream quantity: canonical observables, the per-run
+coexistence-temperature estimators, the extrapolated `T_c(inf)`, and the
 finite-temperature figures. The regeneration is deterministic: in the pinned
 environment `make` produces the same bytes on every run, and these are the
 figures the paper uses.
@@ -13,7 +14,7 @@ figures the paper uses.
 ## Layout
 
 ```
-data/       deposited primitives (read-only inputs; committed)
+data/       deposited data files (read-only inputs; committed)
 workflow/   analysis code (run by the Makefile)
 figures/    figure scripts (PDFs render here)
 build/      everything `make` produces (regenerated; not committed)
@@ -28,13 +29,14 @@ make                 # canonical observables -> T_c estimators -> figures
 ```
 
 `make clean` removes everything under `build/` and the rendered figures; the
-deposited primitives in `data/` are never touched.
+deposited data files in `data/` are never touched.
 
 ## What is deposited vs regenerated
 
-The 6 GB REWL checkpoints are deliberately **not** deposited. The stitched
-density of states and the microcanonical observable moments — a few MB — are the
-deposited starting point, and everything downstream regenerates from them.
+The 6 GB REWL checkpoints are deliberately **not** deposited. The deposited data
+files — the stitched density of states (`stitched_dos.csv`) and the
+microcanonical observable moments (`observables/ChainOrder.csv`), a few MB — are
+the starting point, and everything downstream regenerates from them.
 
 | Path | Status | Produced by |
 | --- | --- | --- |
@@ -53,15 +55,16 @@ deposited starting point, and everything downstream regenerates from them.
   *equivalent* density of states, not a bit-identical one: the equal-weight
   `T_c` agrees to within the seed-to-seed scatter (about 0.2 K). The five
   deposited seeds per size are that reproducibility demonstration.
-- **Checkpoint to primitives** (`mchammer-pt-stitch`, `-stitch-observables`) is
-  deterministic but needs the checkpoints, so it is documented rather than
-  executable here; its outputs are the deposited primitives.
-- **Primitives to results to figures** (`make`) is deterministic: in the pinned
-  environment it produces the same results and figures byte-for-byte on every
-  run.
+- **Checkpoint to the deposited files** (`mchammer-pt-stitch`,
+  `-stitch-observables`) is deterministic but needs the checkpoints, so it is
+  documented rather than executable here; its outputs are the deposited data
+  files.
+- **Deposited files to results to figures** (`make`) is deterministic: in the
+  pinned environment it produces the same results and figures byte-for-byte on
+  every run.
 
 ## Sizes
 
 Supercells L = 6, 9, 12, 15 (four sizes, five seeds each) feed the finite-size
-extrapolation. L = 18 is a separate cross-check whose primitives are added when
+extrapolation. L = 18 is a separate cross-check whose data files are added when
 its runs complete.

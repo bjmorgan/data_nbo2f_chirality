@@ -1,6 +1,6 @@
-# Regenerate all downstream products from the deposited primitives.
+# Regenerate all downstream products from the deposited data files.
 #
-#   data/     deposited primitives (read-only inputs; committed)
+#   data/     deposited data files (read-only inputs; committed)
 #   workflow/ analysis code
 #   build/    everything this Makefile produces (git-ignored)
 #   figures/  figure scripts (PDFs/PNGs land here, git-ignored)
@@ -81,6 +81,6 @@ figures/fig_p3121_legend.pdf: figures/fig_p3121_legend.py
 figures/fig_reo3_parent.pdf: figures/fig_reo3_parent.py
 	cd figures && $(PY) fig_reo3_parent.py
 
-## clean: remove everything regenerated (keeps deposited primitives)
+## clean: remove everything regenerated (keeps deposited data files)
 clean:
 	rm -rf build figures/fig_*.pdf figures/fig_*.png

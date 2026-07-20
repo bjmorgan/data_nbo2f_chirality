@@ -31,7 +31,7 @@ import matplotlib as mpl
 mpl.rcParams["mathtext.fontset"] = "dejavusans"
 T = tableau
 HERE = Path(__file__).resolve().parent
-DATA = HERE.parent / "data" / "rewl"      # deposited primitives (read-only)
+DATA = HERE.parent / "data" / "rewl"      # deposited data files (read-only)
 
 Lseq = [6, 9, 12, 15]
 NAT = {L: 4 * L**3 for L in Lseq}          # atoms in the L^3 supercell

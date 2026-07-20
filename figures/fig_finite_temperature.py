@@ -30,7 +30,7 @@ set_formatting()
 mpl.rcParams["mathtext.fontset"] = "dejavusans"   # italic math variables (custom Helvetica falls back to upright)
 T = tableau
 HERE = Path(__file__).resolve().parent
-DATA = HERE.parent / "data" / "rewl"      # deposited primitives (read-only)
+DATA = HERE.parent / "data" / "rewl"      # deposited data files (read-only)
 BUILD = HERE.parent / "build" / "rewl"    # regenerated products (make)
 kB = 8.617333e-5
 
