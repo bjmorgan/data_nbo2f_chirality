@@ -6,7 +6,9 @@ scaling study of the chirality-emergence transition in NbO2F.
 Given the deposited density-of-states primitives and the pinned environment,
 `make` regenerates every downstream quantity — canonical observables, the
 per-run coexistence-temperature estimators, the extrapolated `T_c(inf)`, and the
-finite-temperature figures — and it does so bit-for-bit.
+finite-temperature figures. The regeneration is deterministic: in the pinned
+environment `make` produces the same bytes on every run, and these are the
+figures the paper uses.
 
 ## Layout
 
@@ -54,8 +56,9 @@ deposited starting point, and everything downstream regenerates from them.
 - **Checkpoint to primitives** (`mchammer-pt-stitch`, `-stitch-observables`) is
   deterministic but needs the checkpoints, so it is documented rather than
   executable here; its outputs are the deposited primitives.
-- **Primitives to results to figures** (`make`) is deterministic and reproduces
-  the deposited-era outputs bit-for-bit in the pinned environment.
+- **Primitives to results to figures** (`make`) is deterministic: in the pinned
+  environment it produces the same results and figures byte-for-byte on every
+  run.
 
 ## Sizes
 
