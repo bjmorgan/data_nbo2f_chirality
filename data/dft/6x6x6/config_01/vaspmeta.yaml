@@ -1,0 +1,4 @@
+title: NbO2F 4x4x4 select 07 (random)
+description: Full geometry optimisation of a 4x4x4 supercell of NbO2F
+notes: A-optimal selected config for CE training. Source: random. CE E/atom: -8.6403 eV.
+status: not started

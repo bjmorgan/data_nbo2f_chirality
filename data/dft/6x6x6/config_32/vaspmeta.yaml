@@ -1,0 +1,8 @@
+title: NbO2F 6x6x6 config_32
+description: Full geometry optimisation of a 6x6x6 supercell of NbO2F
+notes: >-
+  BUSS multi-seed candidate (bootstrap uncertainty selection).
+  Source: buss_multi_seed.py, buss_novel_04.vasp.
+  MACE pre-relaxed (fine-tuned, fixed cell, 32 steps).
+  CE: paircut9_5_5.ce [9,5,5] cluster space.
+status: not started

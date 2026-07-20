@@ -1,0 +1,7 @@
+title: NbO2F 3x3x3 config 080
+description: Full geometry optimisation of a 3x3x3 supercell of NbO2F
+notes: >-
+  Maximum-uncertainty config from bootstrap disagreement MC.
+  F per Nb: 0F:6 2F:18 6F:3. CE pred std: 20 meV.
+  Active learning: anchors ECIs at extreme coordination.
+status: not started

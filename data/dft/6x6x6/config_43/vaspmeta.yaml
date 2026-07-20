@@ -1,0 +1,7 @@
+title: NbO2F 6x6x6 config_43
+description: Full geometry optimisation of a 6x6x6 supercell of NbO2F
+notes: >-
+  config_07 2-shift, std=1.95, gap=+0.9.
+  MACE pre-relaxed (fine-tuned, fixed cell, 31 steps).
+  CE: paircut9_5_5.ce [9,5,5] cluster space.
+status: not started

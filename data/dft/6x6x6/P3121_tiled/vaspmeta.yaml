@@ -1,0 +1,8 @@
+title: NbO2F 6x6x6 tiled P3_121
+description: Full geometry optimisation of tiled P3_121 ground state at 6x6x6
+notes: >-
+  P3_121 orbit rep (3x3x3) tiled 2x2x2 to 6x6x6. Tests whether
+  period-2 distortions (octahedral tilts) couple to the period-3
+  anion ordering, giving additional stabilisation not accessible
+  at 3x3x3.
+status: not started

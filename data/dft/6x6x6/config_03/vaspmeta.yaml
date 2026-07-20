@@ -1,0 +1,6 @@
+title: NbO2F 6x6x6 config 03
+description: Full geometry optimisation of a 6x6x6 supercell of NbO2F
+notes: >-
+  PT active learning structure (v3). Random-start 1000-cycle PT, 100 K replica.
+  CE E/atom: -8.7346 eV. Disordered (cis=0.50, p3=0.71, 59 Nb with 3F).
+status: not started

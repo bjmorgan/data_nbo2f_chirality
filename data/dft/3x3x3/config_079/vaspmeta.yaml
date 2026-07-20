@@ -1,0 +1,7 @@
+title: NbO2F 3x3x3 config_079
+description: Full geometry optimisation of a 3x3x3 supercell of NbO2F
+notes: >-
+  OOF random-phase config with extreme F coordination.
+  F per Nb: 0F:2 1F:8 2F:5 3F:12. CE E/atom: -8.727962 eV.
+  Active learning: tests OOF + coordination defect penalty.
+status: not started

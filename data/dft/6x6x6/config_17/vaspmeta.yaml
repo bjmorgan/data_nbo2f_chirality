@@ -1,0 +1,9 @@
+title: NbO2F 6x6x6 config_17
+description: Full geometry optimisation of a 6x6x6 supercell of NbO2F
+notes: >-
+  PT lowest-energy structure from [9,5,5] CE with RowShift moves.
+  Helical OOF chains aligned along [110] with O3F3 coordination.
+  High inter-chain coherence (icoh_nn=0.83, icoh_global=0.91) but
+  non-cis (cis=0.33). Tests whether this is a real competing phase
+  or a CE artefact.
+status: not started

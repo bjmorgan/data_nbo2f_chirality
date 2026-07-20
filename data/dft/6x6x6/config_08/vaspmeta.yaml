@@ -1,0 +1,7 @@
+title: NbO2F 6x6x6 config_08
+description: Full geometry optimisation of a 6x6x6 supercell of NbO2F
+notes: >-
+  PT lowest-energy 100K final structure (cis=0.53, oof=0.99)
+  CE: paircut9_5_5.ce [9,5,5] cluster space.
+  To be run with standardised PBEsol settings.
+status: not started

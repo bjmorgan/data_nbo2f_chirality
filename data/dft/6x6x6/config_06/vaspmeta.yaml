@@ -1,0 +1,8 @@
+title: NbO2F 6x6x6 config_06
+description: Full geometry optimisation of a 6x6x6 supercell of NbO2F
+notes: >-
+  RowShift+MotifShift PT (w=0.2/0.5) 100K final structure. OOF-ordered
+  but randomly phased (icoh_nn=0.14, cis=0.48). Distinct local minimum
+  from config_05 (Hamming distance 300/648). CE predicts 0.14 meV above
+  P3_121 GS; DFT expected to show several meV gap.
+status: not started

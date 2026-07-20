@@ -19,7 +19,15 @@ dependencies:
       - icet==3.2                # ships the `mchammer` package too
       - mchammer-pt==0.27.1      # reweight/stitch CLIs + coexistence analysis
       - figure_formatting @ git+https://github.com/bjmorgan/figure_formatting.git@bca05929c29ae6ee3ccb21101833f7eb6e203cd9
+      # DFT order-parameter pipeline + structure/CE figures:
+      - chainorder==0.2.0                                     # PyPI == tag v0.2.0
+      - nbo2f_analysis @ git+https://github.com/bjmorgan/nbo2f_analysis.git@5782decd2768ae40defe1121086bc9aecbb1ef63
+      - hofmann @ git+https://github.com/bjmorgan/hofmann.git@3fff36b0bf348e1c3c7f6c997001fe39e16bb17a
 
-# The REWL finite-size-scaling spine (this bundle's current contents) needs only
-# the above. The CE workflow and the DFT/structure figures, added later, will
-# also require nbo2f_analysis, chainorder and mchammer-moves (pinned then).
+# Before the final DOI, the git-pinned deps want proper releases:
+#   figure_formatting, nbo2f_analysis -- not on PyPI; tag + Zenodo.
+#   hofmann -- IS on PyPI (0.1.0..0.20.0), but the structure figures were
+#     validated against the feature-branch commit above; verify a published
+#     version renders identically, then switch this to `hofmann==<ver>`.
+# mchammer-moves is not needed to build anything here -- only to re-run the
+# PT/BUSS active-learning scripts in workflow/pt/.
