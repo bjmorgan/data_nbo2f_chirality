@@ -26,7 +26,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 DATA = REPO / "data" / "rewl"          # deposited data files (read-only)
 BUILD = REPO / "build" / "rewl"        # regenerated products (this pipeline)
-SIZES = (6, 9, 12, 15)
+SIZES = (6, 9, 12, 15, 18)
 SEEDS = range(1, 6)
 SIGMA_LADDER = (2.0, 4.0, 8.0, 16.0, 30.0)
 

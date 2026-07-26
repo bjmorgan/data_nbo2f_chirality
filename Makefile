@@ -19,7 +19,7 @@ PY ?= python
 # ---- REWL finite-size-scaling spine ----
 RWL_DATA  := data/rewl
 RWL_BUILD := build/rewl
-SIZES := 6 9 12 15
+SIZES := 6 9 12 15 18
 SEEDS := 1 2 3 4 5
 MEAS  := $(foreach L,$(SIZES),$(foreach s,$(SEEDS),L$(L)/prod/seed$(s)/measure))
 CANON := $(foreach m,$(MEAS),$(RWL_BUILD)/$(m)/canonical_observables/ChainOrder.csv)
@@ -40,6 +40,9 @@ $(RWL_BUILD)/%/canonical_observables/ChainOrder.csv: $(RWL_DATA)/%/observables/C
 	@mkdir -p $(dir $@)
 	mchammer-pt-reweight-observables $(RWL_DATA)/$*/observables/ $(RWL_DATA)/$*/stitched_dos.csv \
 	    --T-min 100 --T-max 800 --T-step 0.5 -o $(RWL_BUILD)/$*/canonical_observables/
+
+## rewl: canonical observables -> per-run coexistence T_c estimators
+rewl: $(RWL_BUILD)/tc_estimators.csv
 
 $(RWL_BUILD)/tc_estimators.csv: $(CANON) workflow/rewl/tc_estimators.py
 	cd workflow/rewl && $(PY) tc_estimators.py

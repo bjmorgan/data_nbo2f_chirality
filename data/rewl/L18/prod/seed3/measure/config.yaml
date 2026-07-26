@@ -1,0 +1,123 @@
+# REWL L=18 PRODUCTION (5 seeds). Validated by the L18 profile: the
+# 68-window layout (GS+50..GS+270, graduated 3->12 eV, 50% overlap,
+# 1/2/1 walker banding, 107 cores) brackets the band cleanly
+# (ordered ~GS+125, disordered ~GS+209, latent ~84 eV). Production
+# changes vs profile: fill_factor_limit 1e-12 and a high n_trials
+# ceiling for chain-and-monitor -- stop when the coexistence T_c is
+# sigma-robust (default-smoothing equal-area agrees with band-scale),
+# not at budget. Recipe: flatness + f_continuous + multiple 50.
+random_seed: 3
+
+system:
+  n_sc: 18
+  ce: paircut9_5_5_ardr_n96
+
+windows:
+  energy_spacing: 0.1
+  list:
+    - [-203741.1, -203738.1, 1]
+    - [-203739.6, -203736.5, 1]
+    - [-203738.0, -203734.9, 1]
+    - [-203736.5, -203733.3, 1]
+    - [-203734.9, -203731.6, 1]
+    - [-203733.3, -203729.9, 1]
+    - [-203731.6, -203728.2, 1]
+    - [-203729.9, -203726.5, 1]
+    - [-203728.2, -203724.7, 1]
+    - [-203726.4, -203722.8, 1]
+    - [-203724.6, -203720.9, 1]
+    - [-203722.8, -203719.0, 1]
+    - [-203720.9, -203717.1, 1]
+    - [-203719.0, -203715.1, 1]
+    - [-203717.0, -203713.1, 1]
+    - [-203715.0, -203711.0, 1]
+    - [-203713.0, -203708.9, 1]
+    - [-203710.9, -203706.7, 1]
+    - [-203708.8, -203704.5, 1]
+    - [-203706.7, -203702.3, 1]
+    - [-203704.5, -203700.0, 1]
+    - [-203702.2, -203697.6, 1]
+    - [-203699.9, -203695.2, 1]
+    - [-203697.6, -203692.8, 1]
+    - [-203695.2, -203690.3, 1]
+    - [-203692.7, -203687.8, 2]
+    - [-203690.3, -203685.2, 2]
+    - [-203687.7, -203682.5, 2]
+    - [-203685.1, -203679.8, 2]
+    - [-203682.5, -203677.1, 2]
+    - [-203679.8, -203674.3, 2]
+    - [-203677.0, -203671.4, 2]
+    - [-203674.2, -203668.5, 2]
+    - [-203671.4, -203665.5, 2]
+    - [-203668.4, -203662.5, 2]
+    - [-203665.4, -203659.4, 2]
+    - [-203662.4, -203656.2, 2]
+    - [-203659.3, -203652.9, 2]
+    - [-203656.1, -203649.6, 2]
+    - [-203652.9, -203646.3, 2]
+    - [-203649.6, -203642.8, 2]
+    - [-203646.2, -203639.3, 2]
+    - [-203642.8, -203635.7, 2]
+    - [-203639.3, -203632.1, 2]
+    - [-203635.7, -203628.4, 2]
+    - [-203632.0, -203624.6, 2]
+    - [-203628.3, -203620.7, 2]
+    - [-203624.5, -203616.7, 2]
+    - [-203620.6, -203612.7, 2]
+    - [-203616.6, -203608.5, 2]
+    - [-203612.6, -203604.3, 2]
+    - [-203608.5, -203600.0, 2]
+    - [-203604.2, -203595.6, 2]
+    - [-203599.9, -203591.2, 2]
+    - [-203595.6, -203586.6, 2]
+    - [-203591.1, -203581.9, 2]
+    - [-203586.5, -203577.2, 2]
+    - [-203581.8, -203572.3, 2]
+    - [-203577.1, -203567.4, 2]
+    - [-203572.2, -203562.3, 2]
+    - [-203567.3, -203557.2, 2]
+    - [-203562.2, -203551.9, 2]
+    - [-203557.1, -203546.5, 2]
+    - [-203551.8, -203541.1, 2]
+    - [-203546.4, -203535.5, 1]
+    - [-203541.0, -203529.8, 1]
+    - [-203535.4, -203523.9, 1]
+    - [-203532.7, -203521.07520000002, 1]
+
+wl:
+  flatness_limit: 0.8
+  fill_factor_limit: 1.0e-12
+  schedule: "1_over_t"
+  one_over_t_gate: "flatness"
+  one_over_t_entry: "f_continuous"
+  bp_stall_multiple: 50.0
+  flatness_mode: "per_walker"
+  merge_cadence: "at_halve"
+  n_trials_per_walker: 500000000
+  block_size_sweeps: 10
+  trajectory_write_interval_sweeps: 100
+
+moves:
+  - {type: pair_swap, weight: 0.1}
+  - {type: row_shift, weight: 0.2}
+  - {type: motif_shift, weight: 0.5}
+  - {type: chain_swap, weight: 0.5}
+  - {type: row_reflect, weight: 0.5}
+  - {type: cell_reflect, weight: 0.001}
+
+config_search:
+  n_workers: 16
+  window_search_penalty: 2.0
+  walk_sweeps: 50
+  max_walks_per_window: 20
+
+checkpoint:
+  filename: rewl_state.h5
+  interval_cycles: 10
+
+measurement:
+  checkpoint_filename: meas_state.h5
+  observer_interval: 23328         # 1 sweep (n_atoms = 4 x 18^3)
+  n_measure_cycles: 500
+  checkpoint_interval_cycles: 1
+  ops: [chi_11, closest_chi, closest_sim, icoh_global, icoh_nn, oof_amp, cis_frac, nbo4f2_frac, collinear_ff, chirality, circ_coherence]

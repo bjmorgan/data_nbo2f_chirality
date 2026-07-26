@@ -43,12 +43,12 @@ _est = pd.read_csv(_EST)
 TC      = _est.groupby("L")["tc_equal_area"].mean().to_dict()
 TC_STD  = _est.groupby("L")["tc_equal_area"].std().to_dict()
 BINDERT = _est.dropna(subset=["binder_min_T"]).groupby("L")["binder_min_T"].mean().to_dict()
-NAT     = {L: 4 * L**3 for L in (6, 9, 12, 15)}
-Lseq = [6, 9, 12, 15]
+NAT     = {L: 4 * L**3 for L in (6, 9, 12, 15, 18)}
+Lseq = [6, 9, 12, 15, 18]
 # viridis reversed: L=6,9,12 get well-separated green/teal/blue-purple for the
-# Binder curves in (b); L=15 (panel c markers only) keeps the dark-purple end.
-# Non-uniform stops for L = 6, 9, 12, 15. Shared by (b) and (c).
-_vir = [0.72, 0.40, 0.18, 0.0]
+# Binder curves in (c); L=15,18 (panel d markers only) take the dark-purple end.
+# Non-uniform stops for L = 6, 9, 12, 15, 18. Shared by (c) and (d).
+_vir = [0.80, 0.56, 0.34, 0.17, 0.0]
 Lcol = {L: cm.viridis(s) for L, s in zip(Lseq, _vir)}
 
 
@@ -95,8 +95,8 @@ for ax in axes.flat:
 
 LW, RLW, FS = 0.7, 0.7, 7   # all lines 0.7 pt (match axes); legend/in-plot fontsize
 
-# (a) <O>(T) order-parameter hierarchy at L15 (means converge fast; usable from the partial measure)
-L = 15
+# (a) <O>(T) order-parameter hierarchy at the largest L
+L = 18
 OPS = [("chirality_sq_mean", r"$|\chi|$", T["red"], True),
        ("icoh_global_mean", "icoh", T["orange"], False),
        ("oof_amp_mean", "OOF", T["blue"], False),
@@ -112,7 +112,7 @@ axOP.set_title("(a)")
 axOP.legend(fontsize=FS, loc="upper right", handlelength=1.2)
 
 # (b) coexistence P(E|T_c) at the largest L
-Lhi = 15
+Lhi = 18
 E, p, Estar = pe_and_saddle(Lhi)
 epa = (E - Estar) / NAT[Lhi] * 1000.0
 pn = p / p.max()
@@ -128,8 +128,8 @@ axPE.set_xlabel(r"$(E-E^*)/N$  (meV/atom)")
 axPE.set_ylabel(r"$P(E\,|\,T_c)$  (norm.)")
 axPE.set_title("(b)")
 
-# (c) chirality Binder vs T -- L=6,9,12 only; L=15's -270 dip would compress the
-# axis and hide the smaller sizes, and the deepening trend is already clear here.
+# (c) chirality Binder vs T -- L=6,9,12 only; the deeper dips at L=15,18 would
+# compress the axis and hide the smaller sizes, and the trend is already clear here.
 for L in (6, 9, 12):
     axBinder.plot(Tgrid(L), seedavg(L, "chirality_binder"), color=Lcol[L], lw=LW, label=f"$L={L}$")
 axBinder.axhline(0, color=T["grey"], lw=RLW)
@@ -151,9 +151,10 @@ xx = np.linspace(0, x.max() * 1.08, 50)
 bea = np.polyfit([1 / L**3 for L in Lseq], [TC[L] for L in Lseq], 1,
                  w=[np.sqrt(5) / TC_STD[L] for L in Lseq])
 axFSS.plot(xx, np.polyval(bea, xx), "-", color=T["grey"], lw=RLW, zorder=1)
-for L in BINDERT:
+Lbind = [L for L in Lseq if L in BINDERT]
+for L in Lbind:
     axFSS.plot(1 / L**3, BINDERT[L], "D", ms=3.8, color=Lcol[L], markeredgewidth=0, zorder=3)
-bbm = np.polyfit([1 / L**3 for L in BINDERT], [BINDERT[L] for L in BINDERT], 1)
+bbm = np.polyfit([1 / L**3 for L in Lbind], [BINDERT[L] for L in Lbind], 1)
 axFSS.plot(xx, np.polyval(bbm, xx), "-", color=T["grey"], lw=RLW, zorder=1)
 # thermodynamic T_c: horizontal reference the two estimators extrapolate to
 axFSS.axhline(bea[1], ls="--", color="black", lw=RLW, zorder=1)

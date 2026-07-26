@@ -88,9 +88,8 @@ every product lists its inputs and the command that builds it.
 
 ## Sizes
 
-Supercells L = 6, 9, 12, 15 (four sizes, five seeds each) feed the finite-size
-extrapolation. L = 18 is a separate cross-check whose data files are added when
-its runs complete.
+Supercells L = 6, 9, 12, 15, 18 (five sizes, five seeds each) feed the
+finite-size extrapolation.
 
 ## Guides
 

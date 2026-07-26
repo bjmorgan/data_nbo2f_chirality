@@ -16,6 +16,7 @@ no numbers are hard-coded. The per-L equal-weight T_c reproduces
 tc_estimators.csv to 0.1 K.
 """
 from __future__ import annotations
+import sys
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -26,6 +27,9 @@ from ase.units import kB
 from figure_formatting.figure_formatting import set_formatting, tableau
 from mchammer_pt.analysis.coexistence import equal_area_temperature
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "workflow" / "rewl"))
+from tc_estimators import equal_area_robust   # noqa: E402  (same rule as the T_c pipeline)
+
 set_formatting()
 import matplotlib as mpl
 mpl.rcParams["mathtext.fontset"] = "dejavusans"
@@ -33,12 +37,11 @@ T = tableau
 HERE = Path(__file__).resolve().parent
 DATA = HERE.parent / "data" / "rewl"      # deposited data files (read-only)
 
-Lseq = [6, 9, 12, 15]
+Lseq = [6, 9, 12, 15, 18]
 NAT = {L: 4 * L**3 for L in Lseq}          # atoms in the L^3 supercell
-SIGMA = 2.0                                # topology-detection smoothing (bins)
 LW, RLW, FS = 0.7, 0.7, 7                   # match the main finite-T figure
 # same L-colouring as the main finite-temperature figure (reversed viridis)
-Lcol = {L: cm.viridis(s) for L, s in zip(Lseq, [0.72, 0.40, 0.18, 0.0])}
+Lcol = {L: cm.viridis(s) for L, s in zip(Lseq, [0.80, 0.56, 0.34, 0.17, 0.0])}
 
 
 def seedavg_dos(L: int) -> pd.DataFrame:
@@ -52,9 +55,15 @@ def seedavg_dos(L: int) -> pd.DataFrame:
 
 
 def coexistence(L: int):
-    """(dos, T_c, E*, latent_heat, trough=ln[Pmax/Pmin]) at the equal-weight T_c."""
+    """(dos, T_c, E*, latent_heat, trough=ln[Pmax/Pmin]) at the equal-weight T_c.
+
+    The detection smoothing is chosen per size by the same sigma-robustness rule
+    the T_c pipeline uses, rather than fixed: the broader coexistence region at
+    the largest size needs more smoothing for the saddle to be located reliably.
+    """
     dos = seedavg_dos(L)
-    cp = equal_area_temperature(dos, smoothing_sigma=SIGMA)
+    _, _, sigma = equal_area_robust(dos)
+    cp = equal_area_temperature(dos, smoothing_sigma=sigma)
     trough = cp.barrier_height / (kB * cp.T_K)      # ln[P_peak / P_saddle]
     return dos, cp.T_K, cp.split.E_star, cp.latent_heat, trough
 
