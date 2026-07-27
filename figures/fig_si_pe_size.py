@@ -45,11 +45,18 @@ Lcol = {L: cm.viridis(s) for L, s in zip(Lseq, [0.80, 0.56, 0.34, 0.17, 0.0])}
 
 
 def seedavg_dos(L: int) -> pd.DataFrame:
-    """Seed-averaged production stitched ln g on the common energy overlap."""
+    """Seed-averaged production stitched ln g on the common energy overlap.
+
+    The grid follows each size's own sampled bin width, so no resolution is
+    discarded (L=6 was run on a finer energy grid than the larger sizes).
+    """
     seeds = [pd.read_csv(DATA / f"L{L}/prod/seed{s}/stitched_dos.csv") for s in range(1, 6)]
     elo = max(d["energy"].min() for d in seeds)
     ehi = min(d["energy"].max() for d in seeds)
-    E = np.arange(elo, ehi + 1e-9, 0.1)
+    # rounded: the energies are ~1e4 eV, so differencing them leaves the bin
+    # width a few parts in 1e11 short of its nominal value
+    step = round(min(float(np.median(np.diff(d["energy"].to_numpy()))) for d in seeds), 6)
+    E = np.arange(elo, ehi + 1e-9, step)
     S = np.mean([np.interp(E, d["energy"], d["entropy"]) for d in seeds], axis=0)
     return pd.DataFrame({"energy": E, "entropy": S})
 
