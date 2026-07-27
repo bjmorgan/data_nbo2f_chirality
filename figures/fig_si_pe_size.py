@@ -86,7 +86,7 @@ for L in Lseq:
     P /= np.trapezoid(P, xe)                                    # unit area
     axA.plot(xe, P, color=Lcol[L], lw=LW, label=f"$L={L}$")
 axA.set_xlim(-3.5, 3.5)
-axA.set_ylim(bottom=0)
+axA.set_ylim(0, 1.6)        # headroom so the legend clears the tallest (L=18) peaks
 axA.set_xlabel(r"$(E-E^*)/N$  (meV/atom)")
 axA.set_ylabel(r"$P(E\,|\,T_c)$  (unit area)")
 axA.set_title("(a)")
