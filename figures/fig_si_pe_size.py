@@ -97,7 +97,7 @@ axA.legend(fontsize=FS, loc="upper left", handlelength=1.0, labelspacing=0.25,
 for L in Lseq:
     axB.plot(L, latN[L], "o", ms=4.5, color=Lcol[L], markeredgewidth=0, zorder=3)
 axB.plot(Lseq, [latN[L] for L in Lseq], "-", color=T["grey"], lw=RLW, zorder=1)
-axB.set_xlim(4, 17)
+axB.set_xlim(3, 21)
 axB.set_xticks(Lseq)
 axB.set_ylim(0, 4)
 axB.set_xlabel(r"$L$")
