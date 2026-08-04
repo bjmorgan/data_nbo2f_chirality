@@ -62,11 +62,13 @@ DZ = N * CELL_H_MM + GAP_MM                            # sheet-to-sheet vertical
 MARGIN_MM, LABEL_MM = 6.0, 24.0       # surround; label strip (room for two lines)
 LABEL_GAP_MM = 12.0                   # clear gap between a stack and its label
 LABEL_PT = 30.0                       # main-panel label + legend font size (pt)
-PAD_MM = 30.0                         # gallery inter-panel padding
+PAD_MM = 30.0                         # gallery inter-panel padding (between columns)
+PAD_V_MM = 34.0                       # ... and between rows
+LEGEND_GAP_MM = 25.0                  # clear space between the bottom row and the legend
 # Gallery panels carry a third line (icoh) with slightly larger, more open text.
-GAL_LABEL_MM = 56.0                   # taller strip: symmetry label + energy + icoh
-GAL_LABEL_PT = 40.0                   # strip height tracks this: 3 lines at GAL_LINESPACING
-GAL_LINESPACING = 1.5
+GAL_LABEL_MM = 65.0                   # taller strip: symmetry label + energy + icoh
+GAL_LABEL_PT = 42.0                   # strip height tracks this: 3 lines at GAL_LINESPACING
+GAL_LINESPACING = 1.7
 STACK_W = N * CELL_W_MM
 STACK_H = N * CELL_H_MM + (N - 1) * DZ
 PANEL_W = STACK_W + 2 * MARGIN_MM
@@ -213,12 +215,13 @@ def main() -> None:
     order = sorted(orbits, key=lambda ob: (dE[ob.idx], ob.idx))
     nrow, ncol, legend_mm = 4, 3, 33.0
     fig_w = ncol * PANEL_W + (ncol - 1) * PAD_MM
-    fig_h = nrow * PH + (nrow - 1) * PAD_MM + legend_mm
+    fig_h = nrow * PH + (nrow - 1) * PAD_V_MM + LEGEND_GAP_MM + legend_mm
     fig = plt.figure(figsize=(fig_w / 25.4, fig_h / 25.4))
     for idx, ob in enumerate(order):
         row, col = divmod(idx, ncol)
         ax = fig.add_axes((col * (PANEL_W + PAD_MM) / fig_w,
-                           (legend_mm + (nrow - 1 - row) * (PH + PAD_MM)) / fig_h,
+                           (legend_mm + LEGEND_GAP_MM
+                            + (nrow - 1 - row) * (PH + PAD_V_MM)) / fig_h,
                            PANEL_W / fig_w, PH / fig_h))
         draw_panel(ax, fields[ob.idx], hm_label(ob.hm, dE[ob.idx], icoh[ob.idx]),
                    label_mm=GAL_LABEL_MM, fontsize=GAL_LABEL_PT,
