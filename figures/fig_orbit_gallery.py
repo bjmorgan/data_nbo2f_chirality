@@ -64,8 +64,8 @@ LABEL_GAP_MM = 12.0                   # clear gap between a stack and its label
 LABEL_PT = 30.0                       # main-panel label + legend font size (pt)
 PAD_MM = 30.0                         # gallery inter-panel padding
 # Gallery panels carry a third line (icoh) with slightly larger, more open text.
-GAL_LABEL_MM = 50.0                   # taller strip: symmetry label + energy + icoh
-GAL_LABEL_PT = 36.0
+GAL_LABEL_MM = 56.0                   # taller strip: symmetry label + energy + icoh
+GAL_LABEL_PT = 40.0                   # strip height tracks this: 3 lines at GAL_LINESPACING
 GAL_LINESPACING = 1.5
 STACK_W = N * CELL_W_MM
 STACK_H = N * CELL_H_MM + (N - 1) * DZ
@@ -211,7 +211,7 @@ def main() -> None:
     # Tiled 3-wide x 4-tall with a legend strip below.
     PH = panel_h(GAL_LABEL_MM)
     order = sorted(orbits, key=lambda ob: (dE[ob.idx], ob.idx))
-    nrow, ncol, legend_mm = 4, 3, 30.0
+    nrow, ncol, legend_mm = 4, 3, 33.0
     fig_w = ncol * PANEL_W + (ncol - 1) * PAD_MM
     fig_h = nrow * PH + (nrow - 1) * PAD_MM + legend_mm
     fig = plt.figure(figsize=(fig_w / 25.4, fig_h / 25.4))
