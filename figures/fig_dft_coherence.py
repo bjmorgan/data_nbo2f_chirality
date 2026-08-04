@@ -18,6 +18,9 @@ from figure_formatting.figure_formatting import set_formatting, tableau
 set_formatting()
 plt.rcParams["mathtext.fontset"] = "custom"
 plt.rcParams["mathtext.rm"] = "Helvetica Neue"
+LW, RLW, FS, SYM = 0.7, 0.7, 8.5, 12   # line width, fontsize, symbol size
+plt.rcParams.update({k: FS for k in ("font.size", "axes.labelsize", "axes.titlesize",
+                                     "xtick.labelsize", "ytick.labelsize")})
 T = tableau
 HERE = Path(__file__).resolve().parent
 CSV = HERE.parent / "build" / "dft" / "dft_ops.csv"
@@ -25,7 +28,6 @@ if not CSV.exists():
     raise SystemExit(f"missing {CSV}\nrun  make  first")
 df = pd.read_csv(CSV)
 df["dE"] = (df["energy_per_atom"] - df["energy_per_atom"].min()) * 1000.0  # meV/atom above the GS
-LW, RLW, FS, SYM = 0.7, 0.7, 8, 12   # line width, fontsize (matches panel titles), symbol size
 
 CLS = [("random", "random", T["grey"]),
        ("OOF-random-phase", "OOF only", T["blue"]),
@@ -66,5 +68,8 @@ axB.set_title("(b)   energy vs coherence")
 
 fig.tight_layout()
 for ext in ("png", "pdf"):
-    fig.savefig(HERE / f"fig_dft_coherence.{ext}", dpi=300)
+    # the saved bounding box hugs the content (set_formatting already crops tight);
+    # drop the default 0.1 in padding, which would otherwise shrink the plot when the
+    # figure is scaled to the column width in the manuscript
+    fig.savefig(HERE / f"fig_dft_coherence.{ext}", dpi=300, pad_inches=0.01)
 print("wrote", HERE / "fig_dft_coherence.png")
