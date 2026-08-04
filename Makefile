@@ -31,8 +31,11 @@ DFT_OPS   := $(DFT_BUILD)/dft_ops.csv
 ORBIT_CO  := $(DFT_BUILD)/orbit_chain_order.csv
 ORBIT_REPS := $(wildcard data/structures/orbit_representatives/orbit_*.vasp)
 
-.PHONY: all rewl dft figures clean
-all: figures
+# ---- structural order-parameter reference values (SI table) ----
+OP_REFS := build/structural_ops/op_reference_values.csv
+
+.PHONY: all rewl dft refs figures clean
+all: figures refs
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -56,6 +59,15 @@ $(DFT_OPS): $(wildcard $(DFT_DATA)/3x3x3/config_*/OUTCAR) workflow/dft/dft_ops.p
 
 $(ORBIT_CO): $(DFT_OPS) $(ORBIT_REPS) workflow/dft/orbit_chain_order.py
 	cd workflow/dft && $(PY) orbit_chain_order.py
+
+# ===== structural order-parameter references =====
+## refs: ground-state and random-limit reference values for the SI table.
+## The slowest target -- around five minutes, most of it Monte-Carlo sampling of
+## random configurations at the largest size.
+refs: $(OP_REFS)
+
+$(OP_REFS): workflow/structural_ops/generate_op_references.py
+	cd workflow/structural_ops && $(PY) generate_op_references.py
 
 # ===== figures =====
 figures: figures/fig_finite_temperature.pdf figures/fig_si_pe_size.pdf \

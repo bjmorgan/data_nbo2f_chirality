@@ -66,10 +66,22 @@ from these with `make`.
 | `build/rewl/tc_estimators.csv` | regenerated | `workflow/rewl/tc_estimators.py` |
 | `build/dft/dft_ops.csv` | regenerated | `workflow/dft/dft_ops.py` |
 | `build/dft/orbit_chain_order.csv` | regenerated | `workflow/dft/orbit_chain_order.py` |
+| `build/structural_ops/op_reference_values.csv` | regenerated | `workflow/structural_ops/generate_op_references.py` |
 | `figures/fig_*.pdf` | regenerated | `figures/fig_*.py` |
 
 The `Makefile` is the authoritative record of how each regenerated file is made:
 every product lists its inputs and the command that builds it.
+
+## Figures
+
+`figures/` builds every plotted figure in the paper. Two of the paper's
+structure figures are laid out by hand from these outputs rather than emitted
+whole: the parent-structure figure uses `fig_reo3_parent`, and the
+$P3_121$ figure combines `fig_p3121_structure`, `fig_p3121_legend` and
+`fig_orbit_p3121`. The panels themselves are reproduced here; only their
+arrangement and cropping was done in a drawing program. The paper also contains
+one hand-drawn schematic, which is not an analysis output and has no source
+here.
 
 ## Reproducibility boundary
 
