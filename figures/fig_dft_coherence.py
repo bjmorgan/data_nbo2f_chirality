@@ -61,16 +61,15 @@ o = df[df.cls == "orbit"].drop_duplicates("orbit")   # one point per symmetry or
 axB.scatter(o["icoh"], o["dE"], s=SYM, color=T["red"], edgecolors="none", zorder=3)
 gs = o.loc[o["dE"].idxmin()]   # P3_121: lowest energy, coherence = 1 (same symbol)
 axB.annotate(r"$\mathrm{P3_121}$", (gs["icoh"], gs["dE"]),
-             textcoords="offset points", xytext=(-4, 5), ha="right", fontsize=FS)
-axB.set_xlim(0.18, 1.02)     # just outside the 0.2 and 1.0 ticks, so both sit level with the frame
+             textcoords="offset points", xytext=(-1, 2), ha="right", fontsize=FS)
 axB.set_xlabel("inter-chain coherence")
 axB.set_ylabel("energy  (meV/atom)")
 axB.set_title("(b)")
 
 fig.tight_layout()
 for ext in ("png", "pdf"):
-    # the saved bounding box hugs the content (set_formatting already crops tight);
-    # drop the default 0.1 in padding, which would otherwise shrink the plot when the
-    # figure is scaled to the column width in the manuscript
-    fig.savefig(HERE / f"fig_dft_coherence.{ext}", dpi=300, pad_inches=0.01)
+    # keep the default padding: the figure is scaled to a fixed column width, so the
+    # padding sets the scale, and matching it across figures keeps their text and
+    # panels the same size on the page
+    fig.savefig(HERE / f"fig_dft_coherence.{ext}", dpi=300)
 print("wrote", HERE / "fig_dft_coherence.png")
