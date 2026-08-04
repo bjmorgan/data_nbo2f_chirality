@@ -7,13 +7,12 @@ frozen-g measurement, two independent coexistence-temperature estimators --
   * equal-area (Borgs-Kotecky equal-weight) T_c from the DOS, and
   * the Binder-minimum temperature of the chirality (from the measure run) --
 
-and writes them to ``tc_estimators.csv``. Nothing is hard-coded: T_c values
-come from the data. The equal-area smoothing sigma is selected automatically
-per run by a sigma-robustness rule (smallest sigma whose T_c agrees with the
-next-larger sigma, ignoring spurious narrow finds), which reproduces the
-hand-curated consensus (L6 357.87, L9 452.88, L12 478.26, L15 485.69).
+and writes them to ``build/rewl/tc_estimators.csv``. Nothing is hard-coded: T_c
+values come from the data. The equal-weight smoothing sigma is selected
+automatically per run by a sigma-robustness rule (smallest sigma whose T_c
+agrees with the next-larger sigma, ignoring spurious narrow finds).
 
-Run after the DOS/measure are stitched (``mchammer-pt-stitch``):
+Run after the canonical observables are built (see the Makefile):
     python tc_estimators.py
 """
 from __future__ import annotations
@@ -32,9 +31,7 @@ SIGMA_LADDER = (2.0, 4.0, 8.0, 16.0, 30.0)
 
 
 def dos_path(L: int, s: int) -> Path:
-    if L == 15:   # measure not yet run at L15; use the production DOS
-        return DATA / f"L{L}/prod/seed{s}/stitched_dos.csv"
-    return DATA / f"L{L}/prod/seed{s}/measure/stitched_dos.csv"
+    return DATA / f"L{L}/prod/seed{s}/stitched_dos.csv"
 
 
 def measure_path(L: int, s: int) -> Path:

@@ -5,7 +5,7 @@
 (b) DFT energy vs inter-chain coherence among the cis+OOF orbits -- energy
     falls with coherence, selecting the maximally-coherent P3_121 ground state.
 
-Reads dft_calculations/dft_ops.csv (built by dft_ops.py); no hard-coded values.
+Reads build/dft/dft_ops.csv (built by workflow/dft/dft_ops.py); no hard-coded values.
 Built on figure_formatting.
 """
 from __future__ import annotations

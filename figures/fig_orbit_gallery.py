@@ -11,8 +11,8 @@ Two outputs from one primitive:
   fig_orbit_gallery    -- all twelve orbits in ascending DFT energy, so the
                           ground state's stacking variants sit next to it.
 
-Reads structures/orbit_representatives/*.vasp (the enumerated orbit reps) and
-dft_calculations/dft_ops.csv (per-orbit DFT energy, for ordering and labels).
+Reads data/structures/orbit_representatives/*.vasp (the enumerated orbit reps)
+and build/dft/dft_ops.csv (per-orbit DFT energy, for ordering and labels).
 Nothing geometric is hard-coded: the missing axis is recovered from each
 structure. Built on figure_formatting.
 """

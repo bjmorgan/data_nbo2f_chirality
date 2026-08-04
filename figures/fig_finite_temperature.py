@@ -6,13 +6,12 @@ Panels (left -> right):
   c  chirality Binder cumulant vs T     -- negative dip deepening with L
   d  T_c(L) vs 1/L^3                     -- equal-area + Binder-min estimators -> same T_c(inf)
 
-Built on figure_formatting. Panel titles carry the quantity + condition so the
-panels are self-describing. Data root: ../analysis/rewl.
+Built on figure_formatting. Reads the deposited densities of states from
+../data/rewl and the reweighted observables from ../build/rewl.
 
-Pipeline: MC outputs -> analysis/rewl/tc_estimators.py (per-run equal-area and
-Binder-min estimators) -> tc_estimators.csv -> this figure. No T_c values are
-hard-coded; regenerate the CSV (python tc_estimators.py) after new MC data.
-FSS panel (d) and its T_c(inf) update automatically as L15/L18 converge.
+Pipeline: MC outputs -> workflow/rewl/tc_estimators.py (per-run equal-weight and
+Binder-min estimators) -> build/rewl/tc_estimators.csv -> this figure. No T_c
+values are hard-coded, so the fitted T_c(inf) in panel (d) follows the data.
 """
 from __future__ import annotations
 from pathlib import Path
@@ -53,9 +52,7 @@ Lcol = {L: cm.viridis(s) for L, s in zip(Lseq, _vir)}
 
 
 def dosfiles(L):
-    if L == 15:   # measure not yet run at L15; use the production DOS
-        return [DATA / f"L15/prod/seed{s}/stitched_dos.csv" for s in range(1, 6)]
-    return [DATA / f"L{L}/prod/seed{s}/measure/stitched_dos.csv" for s in range(1, 6)]
+    return [DATA / f"L{L}/prod/seed{s}/stitched_dos.csv" for s in range(1, 6)]
 
 
 def seedavg(L, col):

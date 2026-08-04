@@ -1,6 +1,6 @@
 """SI: system-size dependence of P(E|T_c) and the latent heat (NbO2F chirality).
 
-(A) P(E|T_c(L)) for L = 6, 9, 12, 15, each at that size's equal-weight
+(A) P(E|T_c(L)) for L = 6, 9, 12, 15, 18, each at that size's equal-weight
     temperature, centred on its free-energy minimum E*(L) (same convention as
     the main-text P(E) panel) and plotted per atom so the four distributions
     are directly comparable; each normalised to unit area. The trough between
