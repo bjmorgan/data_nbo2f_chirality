@@ -54,7 +54,7 @@ axA.set_xticks([0, 1, 2])
 axA.set_xticklabels([c[1] for c in CLS], fontsize=FS, rotation=20, ha="right")
 axA.set_xlim(-0.5, 2.5)
 axA.set_ylabel("energy  (meV/atom)")
-axA.set_title("(a)   energy by ensemble")
+axA.set_title("(a)")
 
 # (b) energy vs inter-chain coherence among the orbits
 o = df[df.cls == "orbit"].drop_duplicates("orbit")   # one point per symmetry orbit (drops enantiomer duplicates)
@@ -62,9 +62,10 @@ axB.scatter(o["icoh"], o["dE"], s=SYM, color=T["red"], edgecolors="none", zorder
 gs = o.loc[o["dE"].idxmin()]   # P3_121: lowest energy, coherence = 1 (same symbol)
 axB.annotate(r"$\mathrm{P3_121}$", (gs["icoh"], gs["dE"]),
              textcoords="offset points", xytext=(-4, 5), ha="right", fontsize=FS)
+axB.set_xlim(0.18, 1.02)     # just outside the 0.2 and 1.0 ticks, so both sit level with the frame
 axB.set_xlabel("inter-chain coherence")
 axB.set_ylabel("energy  (meV/atom)")
-axB.set_title("(b)   energy vs coherence")
+axB.set_title("(b)")
 
 fig.tight_layout()
 for ext in ("png", "pdf"):
