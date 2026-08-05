@@ -16,6 +16,10 @@
 
 PY ?= python
 
+# matplotlib stamps a creation date into every PDF, which would make otherwise
+# identical figures differ byte-for-byte between runs; fixing the epoch removes it
+export SOURCE_DATE_EPOCH := 0
+
 # ---- REWL finite-size-scaling spine ----
 RWL_DATA  := data/rewl
 RWL_BUILD := build/rewl
