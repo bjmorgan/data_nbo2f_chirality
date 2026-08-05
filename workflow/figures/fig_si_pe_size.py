@@ -116,10 +116,16 @@ axB.set_title("(b)")
 fig.tight_layout()
 for ext in ("png", "pdf"):
     fig.savefig(OUT / f"fig_si_pe_size.{ext}", dpi=300)
-print("wrote", HERE / "fig_si_pe_size.png")
+print("wrote", OUT / "fig_si_pe_size.png")
 
-# --- numbers for the SI text ---
+# --- the coexistence numbers quoted in the SI text ---
+summary = REPO / "build" / "rewl" / "coexistence_summary.csv"
+rows = ["L,n_atoms,T_c_K,latent_heat_eV,latent_heat_meV_per_atom,trough_depth"]
 print(f"\n{'L':>3} {'N':>6} {'Tc(K)':>7} {'dE(eV)':>8} {'dE/N(meV)':>10} {'trough':>7}")
 for L in Lseq:
     _, Tc, _, latent, trough = coexistence(L)
     print(f"{L:>3} {NAT[L]:>6} {Tc:>7.1f} {latent:>8.2f} {latent/NAT[L]*1000:>10.3f} {trough:>7.2f}")
+    rows.append(f"{L},{NAT[L]},{Tc:.4f},{latent:.6f},{latent/NAT[L]*1000:.6f},{trough:.6f}")
+summary.parent.mkdir(parents=True, exist_ok=True)
+summary.write_text("\n".join(rows) + "\n")
+print("wrote", summary)

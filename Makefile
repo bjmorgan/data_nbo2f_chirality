@@ -29,13 +29,17 @@ DFT_DATA  := data/dft
 DFT_BUILD := build/dft
 DFT_OPS   := $(DFT_BUILD)/dft_ops.csv
 ORBIT_CO  := $(DFT_BUILD)/orbit_chain_order.csv
+DFT_CLASS := $(DFT_BUILD)/class_summary.csv
 ORBIT_REPS := $(wildcard data/structures/orbit_representatives/orbit_*.vasp)
 
 # ---- structural order-parameter reference values (SI table) ----
 OP_REFS := build/structural_ops/op_reference_values.csv
 
-.PHONY: all rewl dft refs figures clean
-all: figures refs
+# ---- cluster-expansion cross-validation ----
+CE_LOOCV := build/ce/loocv.csv
+
+.PHONY: all rewl dft refs ce figures clean
+all: figures refs ce
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -53,13 +57,19 @@ $(RWL_BUILD)/tc_estimators.csv: $(CANON) workflow/rewl/tc_estimators.py
 # the paper's quoted T_c(infinity); the fit prints its summary, which is kept as
 # the record of the extrapolation
 $(RWL_BUILD)/fss_fit.txt: $(RWL_BUILD)/tc_estimators.csv workflow/rewl/fss_fit.py
-	cd workflow/rewl && $(PY) fss_fit.py | tee $(CURDIR)/$(RWL_BUILD)/fss_fit.txt
+	cd workflow/rewl && $(PY) fss_fit.py
 
 # ===== DFT =====
 ## dft: per-config DFT order params (3x3x3) then per-orbit chiral invariants
-dft: $(DFT_OPS) $(ORBIT_CO)
+dft: $(DFT_OPS) $(DFT_CLASS) $(ORBIT_CO)
 
 $(DFT_OPS): $(wildcard $(DFT_DATA)/3x3x3/config_*/OUTCAR) workflow/dft/dft_ops.py
+	cd workflow/dft && $(PY) dft_ops.py
+
+# dft_ops.py writes the class summary immediately after dft_ops.csv, so building
+# the rule above satisfies this one; the recipe fires only if the summary alone
+# is removed (grouped targets would say this directly, but need make 4.3)
+$(DFT_CLASS): $(DFT_OPS) workflow/dft/dft_ops.py
 	cd workflow/dft && $(PY) dft_ops.py
 
 $(ORBIT_CO): $(DFT_OPS) $(ORBIT_REPS) workflow/dft/orbit_chain_order.py
@@ -73,6 +83,15 @@ refs: $(OP_REFS)
 
 $(OP_REFS): workflow/structural_ops/generate_op_references.py
 	cd workflow/structural_ops && $(PY) generate_op_references.py
+
+# ===== cluster expansion =====
+## ce: leave-one-out cross-validation of the deposited cluster expansion, whose
+## RMSE is the fit quality quoted in the Methods
+ce: $(CE_LOOCV)
+
+$(CE_LOOCV): data/ce/training_set_refitB_n96.json methods/cluster_expansion/loocv.py methods/cluster_expansion/ce_fit.py
+	@mkdir -p $(dir $@)
+	cd methods/cluster_expansion && $(PY) loocv.py
 
 # ===== figures =====
 figures: figures/fig_finite_temperature.pdf figures/fig_si_pe_size.pdf \

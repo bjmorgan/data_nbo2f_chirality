@@ -57,6 +57,16 @@ def posterior(L: np.ndarray, T: np.ndarray, se: np.ndarray):
     return Et, sdt, s_med, post, t0, v0, cdf
 
 
+OUT = Path(__file__).resolve().parents[2] / "build" / "rewl" / "fss_fit.txt"
+_lines: list[str] = []
+
+
+def emit(text: str = "") -> None:
+    """Print, and keep the line for the summary file."""
+    print(text)
+    _lines.append(text)
+
+
 def main() -> None:
     L, T, std, n = load_data()
     se = std / np.sqrt(n)
@@ -76,19 +86,22 @@ def main() -> None:
     beta = np.linalg.solve(A.T @ (A / V[:, None]), A.T @ (T / V))
     pred = A @ beta
 
-    print("Bayesian FSS:  T_c(L) ~ N(T_inf + a/L^3, se^2 + sigma_sys^2)   (source: tc_estimators.csv)\n")
-    print(f"{'L':>3} {'T_c (K)':>9} {'seedSE':>7} {'n':>2} {'fit (K)':>9} {'resid':>7}")
+    emit("Bayesian FSS:  T_c(L) ~ N(T_inf + a/L^3, se^2 + sigma_sys^2)   (source: tc_estimators.csv)\n")
+    emit(f"{'L':>3} {'T_c (K)':>9} {'seedSE':>7} {'n':>2} {'fit (K)':>9} {'resid':>7}")
     for k, t, s, nn, p in zip(L, T, se, n, pred):
-        print(f"{int(k):>3} {t:>9.2f} {s:>7.3f} {int(nn):>2} {p:>9.2f} {t - p:>+7.2f}")
-    print()
-    print(f"  T_c(inf) = {Et:.2f} +/- {sdt:.2f} K   (95% CI [{lo:.2f}, {hi:.2f}])   [posterior]")
-    print(f"  sigma_sys = {s_med:.2f} K  (95% [{s_lo:.2f}, {s_hi:.2f}]);  prior HalfNormal({SIGMA_SCALE:.0f} K)")
-    print()
-    print("  leave-one-out T_c(inf) posterior mean:")
+        emit(f"{int(k):>3} {t:>9.2f} {s:>7.3f} {int(nn):>2} {p:>9.2f} {t - p:>+7.2f}")
+    emit()
+    emit(f"  T_c(inf) = {Et:.2f} +/- {sdt:.2f} K   (95% CI [{lo:.2f}, {hi:.2f}])   [posterior]")
+    emit(f"  sigma_sys = {s_med:.2f} K  (95% [{s_lo:.2f}, {s_hi:.2f}]);  prior HalfNormal({SIGMA_SCALE:.0f} K)")
+    emit()
+    emit("  leave-one-out T_c(inf) posterior mean:")
     for drop in L:
         keep = L != drop
         eti, _, _, *_ = posterior(L[keep], T[keep], se[keep])
-        print(f"    without L={int(drop):>2}: {eti:.2f} K")
+        emit(f"    without L={int(drop):>2}: {eti:.2f} K")
+
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text("\n".join(_lines) + "\n")
 
 
 if __name__ == "__main__":
