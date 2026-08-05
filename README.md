@@ -1,6 +1,6 @@
 # Data analysis for &ldquo;Structural Chirality from Short-Range Order in Heteroanionic Materials&rdquo;
 
-[![DOI](https://zenodo.org/badge/PLACEHOLDER.svg)](https://zenodo.org/badge/latestdoi/PLACEHOLDER)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21799772.svg)](https://doi.org/10.5281/zenodo.21799772)
 
 Authors:
 - Benjamin J. Morgan ORCID [0000-0002-3056-8233](https://orcid.org/0000-0002-3056-8233)
