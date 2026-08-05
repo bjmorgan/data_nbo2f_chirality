@@ -19,6 +19,8 @@ from ase import Atoms
 from hofmann import StructureScene, BondSpec, AtomStyle, ViewState
 
 HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[1]                     # repository root
+OUT = REPO / "figures"                    # rendered figures
 A = 3.9
 CELL_COLOUR = {0: "#a2d8e6", 1: "#dcb96f", 2: "#58b787"}   # x blue, y gold, z green
 F_COLOUR, O_COLOUR = (0.1, 0.1, 0.1), "white"
@@ -73,7 +75,7 @@ def main() -> None:
                          bond_outline_width=OUTLINE_PT, show_axes=False)
     fig.tight_layout()
     for ext in ("pdf", "png"):
-        fig.savefig(HERE / f"fig_p3121_legend.{ext}", dpi=300)
+        fig.savefig(OUT / f"fig_p3121_legend.{ext}", dpi=300)
     print("wrote", HERE / "fig_p3121_legend.pdf")
 
 

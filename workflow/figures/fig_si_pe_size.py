@@ -27,7 +27,7 @@ from ase.units import kB
 from figure_formatting.figure_formatting import set_formatting, tableau
 from mchammer_pt.analysis.coexistence import equal_area_temperature
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "workflow" / "rewl"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "rewl"))
 from tc_estimators import equal_area_robust   # noqa: E402  (same rule as the T_c pipeline)
 
 set_formatting()
@@ -35,7 +35,9 @@ import matplotlib as mpl
 mpl.rcParams["mathtext.fontset"] = "dejavusans"
 T = tableau
 HERE = Path(__file__).resolve().parent
-DATA = HERE.parent / "data" / "rewl"      # deposited data files (read-only)
+REPO = HERE.parents[1]                     # repository root
+OUT = REPO / "figures"                    # rendered figures
+DATA = REPO / "data" / "rewl"      # deposited data files (read-only)
 
 Lseq = [6, 9, 12, 15, 18]
 NAT = {L: 4 * L**3 for L in Lseq}          # atoms in the L^3 supercell
@@ -113,7 +115,7 @@ axB.set_title("(b)")
 
 fig.tight_layout()
 for ext in ("png", "pdf"):
-    fig.savefig(HERE / f"fig_si_pe_size.{ext}", dpi=300)
+    fig.savefig(OUT / f"fig_si_pe_size.{ext}", dpi=300)
 print("wrote", HERE / "fig_si_pe_size.png")
 
 # --- numbers for the SI text ---

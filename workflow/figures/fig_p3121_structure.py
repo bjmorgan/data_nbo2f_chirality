@@ -18,7 +18,9 @@ from chainorder import SublatticeOccupation
 from hofmann import StructureScene, BondSpec, AtomStyle, ViewState
 
 HERE = Path(__file__).resolve().parent
-REP = HERE.parent / "data" / "structures" / "orbit_representatives"
+REPO = HERE.parents[1]                     # repository root
+OUT = REPO / "figures"                    # rendered figures
+REP = REPO / "data" / "structures" / "orbit_representatives"
 VASP = next(REP.glob("orbit_11_*.vasp"))
 N = 3
 
@@ -73,7 +75,7 @@ def main() -> None:
         half_bonds=False, bond_colour="white",
         atom_outline_width=OUTLINE_PT, bond_outline_width=OUTLINE_PT)
     for ext in ("pdf", "png"):
-        fig.savefig(HERE / f"fig_p3121_structure.{ext}", dpi=300)
+        fig.savefig(OUT / f"fig_p3121_structure.{ext}", dpi=300)
     print("wrote", HERE / "fig_p3121_structure.pdf")
 
 

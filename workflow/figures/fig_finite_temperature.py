@@ -29,8 +29,10 @@ set_formatting()
 mpl.rcParams["mathtext.fontset"] = "dejavusans"   # italic math variables (custom Helvetica falls back to upright)
 T = tableau
 HERE = Path(__file__).resolve().parent
-DATA = HERE.parent / "data" / "rewl"      # deposited data files (read-only)
-BUILD = HERE.parent / "build" / "rewl"    # regenerated products (make)
+REPO = HERE.parents[1]                     # repository root
+OUT = REPO / "figures"                    # rendered figures
+DATA = REPO / "data" / "rewl"      # deposited data files (read-only)
+BUILD = REPO / "build" / "rewl"    # regenerated products (make)
 kB = 8.617333e-5
 
 # Per-run T_c estimators are computed by workflow/rewl/tc_estimators.py and
@@ -168,5 +170,5 @@ axFSS.legend(handles=[Line2D([], [], marker="o", ls="none", color=T["grey"], ms=
 
 fig.tight_layout()
 for ext in ("png", "pdf"):
-    fig.savefig(HERE / f"fig_finite_temperature.{ext}", dpi=300)
+    fig.savefig(OUT / f"fig_finite_temperature.{ext}", dpi=300)
 print("wrote", HERE / "fig_finite_temperature.png")

@@ -23,7 +23,9 @@ plt.rcParams.update({k: FS for k in ("font.size", "axes.labelsize", "axes.titles
                                      "xtick.labelsize", "ytick.labelsize")})
 T = tableau
 HERE = Path(__file__).resolve().parent
-CSV = HERE.parent / "build" / "dft" / "dft_ops.csv"
+REPO = HERE.parents[1]                     # repository root
+OUT = REPO / "figures"                    # rendered figures
+CSV = REPO / "build" / "dft" / "dft_ops.csv"
 if not CSV.exists():
     raise SystemExit(f"missing {CSV}\nrun  make  first")
 df = pd.read_csv(CSV)
@@ -71,5 +73,5 @@ for ext in ("png", "pdf"):
     # keep the default padding: the figure is scaled to a fixed column width, so the
     # padding sets the scale, and matching it across figures keeps their text and
     # panels the same size on the page
-    fig.savefig(HERE / f"fig_dft_coherence.{ext}", dpi=300)
+    fig.savefig(OUT / f"fig_dft_coherence.{ext}", dpi=300)
 print("wrote", HERE / "fig_dft_coherence.png")

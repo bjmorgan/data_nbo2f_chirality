@@ -32,9 +32,11 @@ plt.rcParams["mathtext.fontset"] = "custom"
 plt.rcParams["mathtext.rm"] = "Helvetica Neue"
 
 HERE = Path(__file__).resolve().parent
-REP = HERE.parent / "data" / "structures" / "orbit_representatives"
-CSV = HERE.parent / "build" / "dft" / "dft_ops.csv"
-COCSV = HERE.parent / "build" / "dft" / "orbit_chain_order.csv"
+REPO = HERE.parents[1]                     # repository root
+OUT = REPO / "figures"                    # rendered figures
+REP = REPO / "data" / "structures" / "orbit_representatives"
+CSV = REPO / "build" / "dft" / "dft_ops.csv"
+COCSV = REPO / "build" / "dft" / "orbit_chain_order.csv"
 N = 3
 
 # --- Mockup geometry (all adjustable). Lengths in mm, strokes in pt. ---
@@ -204,7 +206,7 @@ def main() -> None:
     figm = plt.figure(figsize=(PANEL_W / 25.4, panel_h(LABEL_MM) / 25.4))
     draw_panel(figm.add_axes((0, 0, 1, 1)), fields[gs.idx], rf"$\mathrm{{{gs.hm}}}$")
     for ext in ("png", "pdf"):
-        figm.savefig(HERE / f"fig_orbit_p3121.{ext}", dpi=300)
+        figm.savefig(OUT / f"fig_orbit_p3121.{ext}", dpi=300)
 
     # --- SI gallery: all twelve in ascending DFT energy ---
     # Energy order (idx breaks ties) so the near-degenerate stacking variants of
@@ -232,7 +234,7 @@ def main() -> None:
                loc="center", bbox_to_anchor=(0.5, 0.5 * legend_mm / fig_h),
                fontsize=GAL_LABEL_PT, title_fontsize=GAL_LABEL_PT)
     for ext in ("png", "pdf"):
-        fig.savefig(HERE / f"fig_orbit_gallery.{ext}", dpi=300)
+        fig.savefig(OUT / f"fig_orbit_gallery.{ext}", dpi=300)
     print("wrote", HERE / "fig_orbit_gallery.png", "and fig_orbit_p3121.png")
 
 

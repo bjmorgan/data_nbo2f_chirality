@@ -1,9 +1,9 @@
 # Regenerate all downstream products from the deposited data files.
 #
 #   data/     deposited data files (read-only inputs; committed)
-#   workflow/ analysis code
-#   build/    everything this Makefile produces (git-ignored)
-#   figures/  figure scripts (PDFs/PNGs land here, git-ignored)
+#   workflow/ analysis and plotting code
+#   build/    intermediate products (git-ignored)
+#   figures/  rendered manuscript figures (committed)
 #
 # Two pipelines feed the figures:
 #   REWL  data/rewl/...        -> canonical observables -> T_c estimators
@@ -80,26 +80,26 @@ figures: figures/fig_finite_temperature.pdf figures/fig_si_pe_size.pdf \
          figures/fig_p3121_structure.pdf figures/fig_p3121_legend.pdf \
          figures/fig_reo3_parent.pdf
 
-figures/fig_finite_temperature.pdf: $(RWL_BUILD)/tc_estimators.csv $(RWL_BUILD)/fss_fit.txt $(CANON) figures/fig_finite_temperature.py
-	cd figures && $(PY) fig_finite_temperature.py
+figures/fig_finite_temperature.pdf: $(RWL_BUILD)/tc_estimators.csv $(RWL_BUILD)/fss_fit.txt $(CANON) workflow/figures/fig_finite_temperature.py
+	cd workflow/figures && $(PY) fig_finite_temperature.py
 
-figures/fig_si_pe_size.pdf: $(CANON) figures/fig_si_pe_size.py
-	cd figures && $(PY) fig_si_pe_size.py
+figures/fig_si_pe_size.pdf: $(CANON) workflow/figures/fig_si_pe_size.py
+	cd workflow/figures && $(PY) fig_si_pe_size.py
 
-figures/fig_dft_coherence.pdf: $(DFT_OPS) figures/fig_dft_coherence.py
-	cd figures && $(PY) fig_dft_coherence.py
+figures/fig_dft_coherence.pdf: $(DFT_OPS) workflow/figures/fig_dft_coherence.py
+	cd workflow/figures && $(PY) fig_dft_coherence.py
 
-figures/fig_orbit_gallery.pdf: $(DFT_OPS) $(ORBIT_CO) $(ORBIT_REPS) figures/fig_orbit_gallery.py
-	cd figures && $(PY) fig_orbit_gallery.py
+figures/fig_orbit_gallery.pdf: $(DFT_OPS) $(ORBIT_CO) $(ORBIT_REPS) workflow/figures/fig_orbit_gallery.py
+	cd workflow/figures && $(PY) fig_orbit_gallery.py
 
-figures/fig_p3121_structure.pdf: $(ORBIT_REPS) figures/fig_p3121_structure.py
-	cd figures && $(PY) fig_p3121_structure.py
+figures/fig_p3121_structure.pdf: $(ORBIT_REPS) workflow/figures/fig_p3121_structure.py
+	cd workflow/figures && $(PY) fig_p3121_structure.py
 
-figures/fig_p3121_legend.pdf: figures/fig_p3121_legend.py
-	cd figures && $(PY) fig_p3121_legend.py
+figures/fig_p3121_legend.pdf: workflow/figures/fig_p3121_legend.py
+	cd workflow/figures && $(PY) fig_p3121_legend.py
 
-figures/fig_reo3_parent.pdf: figures/fig_reo3_parent.py
-	cd figures && $(PY) fig_reo3_parent.py
+figures/fig_reo3_parent.pdf: workflow/figures/fig_reo3_parent.py
+	cd workflow/figures && $(PY) fig_reo3_parent.py
 
 ## clean: remove everything regenerated (keeps deposited data files)
 clean:

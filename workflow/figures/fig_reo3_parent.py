@@ -17,6 +17,8 @@ from ase import Atoms
 from hofmann import StructureScene, BondSpec, PolyhedronSpec, AtomStyle, ViewState
 
 HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[1]                     # repository root
+OUT = REPO / "figures"                    # rendered figures
 A = 3.9                               # cubic lattice parameter (A)
 OCTA_COLOUR = "#9bb8d3"               # neutral grey octahedra (unordered parent)
 ANION_COLOUR = "#d98b8b"             # anion (mixed O/F site, single colour)
@@ -58,7 +60,7 @@ def main() -> None:
         None, figsize=(5, 5), show=False, atom_scale=ATOM_SCALE,
         atom_outline_width=EDGE_PT, pbc=False, show_cell=False, show_axes=True)
     for ext in ("pdf", "png"):
-        fig.savefig(HERE / f"fig_reo3_parent.{ext}", dpi=300)
+        fig.savefig(OUT / f"fig_reo3_parent.{ext}", dpi=300)
     print("wrote", HERE / "fig_reo3_parent.pdf")
 
 
