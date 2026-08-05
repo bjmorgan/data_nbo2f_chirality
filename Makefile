@@ -44,11 +44,16 @@ $(RWL_BUILD)/%/canonical_observables/ChainOrder.csv: $(RWL_DATA)/%/observables/C
 	mchammer-pt-reweight-observables $(RWL_DATA)/$*/observables/ $(RWL_DATA)/$*/stitched_dos.csv \
 	    --T-min 100 --T-max 800 --T-step 0.5 -o $(RWL_BUILD)/$*/canonical_observables/
 
-## rewl: canonical observables -> per-run coexistence T_c estimators
-rewl: $(RWL_BUILD)/tc_estimators.csv
+## rewl: canonical observables -> per-run T_c estimators -> extrapolation to L -> infinity
+rewl: $(RWL_BUILD)/tc_estimators.csv $(RWL_BUILD)/fss_fit.txt
 
 $(RWL_BUILD)/tc_estimators.csv: $(CANON) workflow/rewl/tc_estimators.py
 	cd workflow/rewl && $(PY) tc_estimators.py
+
+# the paper's quoted T_c(infinity); the fit prints its summary, which is kept as
+# the record of the extrapolation
+$(RWL_BUILD)/fss_fit.txt: $(RWL_BUILD)/tc_estimators.csv workflow/rewl/fss_fit.py
+	cd workflow/rewl && $(PY) fss_fit.py | tee $(CURDIR)/$(RWL_BUILD)/fss_fit.txt
 
 # ===== DFT =====
 ## dft: per-config DFT order params (3x3x3) then per-orbit chiral invariants
@@ -75,7 +80,7 @@ figures: figures/fig_finite_temperature.pdf figures/fig_si_pe_size.pdf \
          figures/fig_p3121_structure.pdf figures/fig_p3121_legend.pdf \
          figures/fig_reo3_parent.pdf
 
-figures/fig_finite_temperature.pdf: $(RWL_BUILD)/tc_estimators.csv $(CANON) figures/fig_finite_temperature.py
+figures/fig_finite_temperature.pdf: $(RWL_BUILD)/tc_estimators.csv $(RWL_BUILD)/fss_fit.txt $(CANON) figures/fig_finite_temperature.py
 	cd figures && $(PY) fig_finite_temperature.py
 
 figures/fig_si_pe_size.pdf: $(CANON) figures/fig_si_pe_size.py
