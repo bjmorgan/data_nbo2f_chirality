@@ -17,6 +17,13 @@ sample.
   9, 5 and 5 &#8491; (41 orbits, of which 19 have non-zero effective cluster
   interactions).
 
-`methods/cluster_expansion/` contains the code that produced both: how the
-training set was assembled, how the hyperparameters were chosen, and the fit
-itself. Refitting from this training set reproduces the deposited model.
+Both files are committed, so that this directory holds the model the simulations
+actually sampled, and both are also rebuilt by `make` from the calculations in
+`data/dft/6x6x6/`: the training set is assembled from their `OUTCAR`s, and the
+model is fitted to it. The rebuilt training set is byte-identical to the one
+here. The rebuilt model has identical effective cluster interactions, but is not
+byte-identical, because the file format records when it was written.
+
+`methods/cluster_expansion/` contains the code that does this, together with the
+hyperparameter selection and the active-learning loop that grew the training set
+in the first place.

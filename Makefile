@@ -1,6 +1,7 @@
 # Regenerate all downstream products from the deposited data files.
 #
-#   data/     deposited data files (read-only inputs; committed)
+#   data/     the dataset (committed); the DFT and REWL outputs are read-only,
+#             the cluster expansion and its training set are rebuilt from them
 #   workflow/ analysis and plotting code
 #   build/    intermediate products (git-ignored)
 #   figures/  rendered manuscript figures (committed)
@@ -39,7 +40,12 @@ ORBIT_REPS := $(wildcard data/structures/orbit_representatives/orbit_*.vasp)
 # ---- structural order-parameter reference values (SI table) ----
 OP_REFS := build/structural_ops/op_reference_values.csv
 
-# ---- cluster-expansion cross-validation ----
+# ---- cluster expansion ----
+# The training set and the fitted model are committed, so that the deposit holds
+# the model the simulations actually sampled; they are also rebuilt from the DFT
+# calculations, so the chain from those to the model is unbroken.
+CE_TRAIN := data/ce/training_set_refitB_n96.json
+CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 
 .PHONY: all rewl dft refs ce figures clean
@@ -89,11 +95,17 @@ $(OP_REFS): workflow/structural_ops/generate_op_references.py
 	cd workflow/structural_ops && $(PY) generate_op_references.py
 
 # ===== cluster expansion =====
-## ce: leave-one-out cross-validation of the deposited cluster expansion, whose
-## RMSE is the fit quality quoted in the Methods
-ce: $(CE_LOOCV)
+## ce: DFT energies -> training set -> fitted model -> cross-validated RMSE,
+## the fit quality quoted in the Methods
+ce: $(CE_TRAIN) $(CE_MODEL) $(CE_LOOCV)
 
-$(CE_LOOCV): data/ce/training_set_refitB_n96.json methods/cluster_expansion/loocv.py methods/cluster_expansion/ce_fit.py
+$(CE_TRAIN): $(wildcard $(DFT_DATA)/6x6x6/*/OUTCAR) methods/cluster_expansion/build_training_set.py
+	cd methods/cluster_expansion && $(PY) build_training_set.py
+
+$(CE_MODEL): $(CE_TRAIN) methods/cluster_expansion/fit_cluster_expansion.py methods/cluster_expansion/ce_fit.py
+	cd methods/cluster_expansion && $(PY) fit_cluster_expansion.py
+
+$(CE_LOOCV): $(CE_TRAIN) methods/cluster_expansion/loocv.py methods/cluster_expansion/ce_fit.py
 	@mkdir -p $(dir $@)
 	cd methods/cluster_expansion && $(PY) loocv.py
 
@@ -124,6 +136,7 @@ figures/fig_p3121_legend.pdf: workflow/figures/fig_p3121_legend.py
 figures/fig_reo3_parent.pdf: workflow/figures/fig_reo3_parent.py
 	cd workflow/figures && $(PY) fig_reo3_parent.py
 
-## clean: remove everything regenerated (keeps deposited data files)
+## clean: remove everything the pipeline regenerates, including the committed
+## figures and cluster expansion; the DFT and REWL data are never touched
 clean:
-	rm -rf build figures/fig_*.pdf figures/fig_*.png
+	rm -rf build figures/fig_*.pdf figures/fig_*.png $(CE_TRAIN) $(CE_MODEL)

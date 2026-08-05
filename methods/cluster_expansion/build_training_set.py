@@ -20,7 +20,7 @@ from ase.io.jsonio import encode
 
 HERE = Path(__file__).resolve().parent
 DFT = HERE.parents[1] / "data" / "dft" / "6x6x6"
-OUT = HERE.parents[1] / "build" / "ce" / "training_set_refitB_n96.json"
+OUT = HERE.parents[1] / "data" / "ce" / "training_set_refitB_n96.json"
 
 
 def main() -> None:

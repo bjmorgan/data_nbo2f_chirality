@@ -26,7 +26,7 @@ from ce_fit import THRESHOLD_LAMBDA, cluster_space, fit_ardr, fit_data
 
 HERE = Path(__file__).resolve().parent
 TRAINING_SET = HERE.parents[1] / "data" / "ce" / "training_set_refitB_n96.json"
-OUT = HERE.parents[1] / "build" / "ce" / "paircut9_5_5_ardr_n96.ce"
+OUT = HERE.parents[1] / "data" / "ce" / "paircut9_5_5_ardr_n96.ce"
 
 
 def main() -> None:
