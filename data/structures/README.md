@@ -1,5 +1,8 @@
 # Structures
 
+This directory contains the structure files the analysis reads: the enumerated
+anion orderings, and reference settings of the ground state.
+
 - `orbit_representatives/`: One representative of each of the twelve
   symmetry-distinct anion orderings that satisfy both ordering rules (cis
   coordination everywhere and period-three ordering along every chain) in the

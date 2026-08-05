@@ -1,8 +1,9 @@
 # Replica-exchange Wang&ndash;Landau simulations
 
-Densities of states and structural observables from the finite-size scaling
-study, for supercells of side *L* = 6, 9, 12, 15 and 18 (containing 4*L*<sup>3</sup>
-atoms), with five independent random seeds at each size.
+This directory contains the densities of states and structural observables from
+the replica-exchange Wang&ndash;Landau simulations, for supercells of side
+*L* = 6, 9, 12, 15 and 18 (containing 4*L*<sup>3</sup> atoms), with five
+independent random seeds at each size.
 
 Each run is one directory, `L<L>/prod/seed<n>/`, containing:
 

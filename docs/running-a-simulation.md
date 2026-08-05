@@ -1,8 +1,8 @@
 # Running a REWL simulation
 
-How the REWL data was produced, and how to run or extend a run. This is the
-compute-heavy upstream: a converged run's checkpoint reaches several GB and
-takes many cluster-hours. Its outputs — the stitched density of states and the
+This guide describes how the Wang&ndash;Landau data was produced, and how to run
+or extend a simulation. This is the compute-heavy upstream: a converged run's
+checkpoint reaches several GB and takes many cluster-hours. Its outputs — the stitched density of states and the
 observable moments — are the deposited data files, so the `make` figure pipeline
 does not need this step. Run it to reproduce or redo the sampling itself.
 

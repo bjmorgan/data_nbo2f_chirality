@@ -1,7 +1,8 @@
 # Cluster expansion
 
-The lattice model of the configurational energy that the Wang&ndash;Landau
-simulations sample, and the training set it was fitted to.
+This directory contains the cluster expansion &mdash; the lattice model of the
+configurational energy that the Wang&ndash;Landau simulations sample &mdash; and
+the training set it was fitted to.
 
 - `paircut9_5_5_ardr_n96.ce`: The fitted cluster expansion, in
   [icet](https://icet.materialsmodeling.org)'s format; read it with

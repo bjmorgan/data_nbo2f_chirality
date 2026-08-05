@@ -1,7 +1,7 @@
 # Cluster-expansion workflow
 
-How the cluster expansion the REWL runs sample was built: the fit itself, and
-the active-learning loop that grew its DFT training set. This is methods
+This guide describes how the cluster expansion was built: the fit itself, and the
+active-learning loop that grew its density-functional training set. It is methods
 documentation for understanding and reuse — the scripts in
 `methods/cluster_expansion/` are runnable to verify or refit, but they are not
 part of the `make` figure pipeline, and the loop as a whole is not turn-key

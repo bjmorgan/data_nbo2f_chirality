@@ -1,7 +1,7 @@
 # Density-functional calculations
 
-VASP calculations of anion orderings in NbO<sub>2</sub>F, in two sets that serve
-different purposes.
+This directory contains the VASP calculations of anion orderings in
+NbO<sub>2</sub>F, in two sets that serve different purposes.
 
 - `3x3x3/`: 92 configurations in the 3&times;3&times;3 supercell, spanning random
   anion placements, period-three orderings with random inter-chain phase, and the
