@@ -80,4 +80,4 @@ data and the figures are licensed under CC BY 4.0 (`data/LICENSE`,
 
 ## References
 
-1. B. J. Morgan *et al.*, &ldquo;Structural Chirality from Short-Range Order in Heteroanionic Materials&rdquo; [DOI pending].
+1. B. J. Morgan, &ldquo;Structural Chirality from Short-Range Order in Heteroanionic Materials&rdquo; [DOI pending].
