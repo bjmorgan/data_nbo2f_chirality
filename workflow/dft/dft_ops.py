@@ -99,9 +99,20 @@ def main() -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(out, index=False)
     print(f"wrote {out}  ({len(df)} configs)\n")
-    print(df.groupby("cls").agg(
-        n=("config", "count"), epa_min=("energy_per_atom", "min"),
-        epa_max=("energy_per_atom", "max")).to_string(float_format=lambda v: f"{v:.4f}"))
+
+    # Energy spread of each ordering class, relative to the lowest-energy
+    # structure -- the tiers quoted in the results text.
+    df["dE_meV"] = (df.energy_per_atom - df.energy_per_atom.min()) * 1000.0
+    summary = (df.groupby("cls")["dE_meV"]
+                 .agg(n="count", median="median", min="min", max="max")
+                 .reset_index()
+                 .sort_values("median"))
+    summary.columns = ["cls", "n", "median_meV_per_atom", "min_meV_per_atom", "max_meV_per_atom"]
+    csum = BUILD / "class_summary.csv"
+    summary.to_csv(csum, index=False)
+    print(summary.to_string(index=False, float_format=lambda v: f"{v:.2f}"))
+    print(f"\nwrote {csum}")
+
     gs = df.iloc[0]
     print(f"\nground state: config_{gs.config}  epa={gs.energy_per_atom:.4f}  "
           f"cis={gs.cis:.2f} oof={gs.oof:.2f} icoh={gs.icoh:.2f} |chi|={gs.chi:.2f}")
