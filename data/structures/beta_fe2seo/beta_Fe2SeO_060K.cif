@@ -1,0 +1,39 @@
+# beta-Fe2SeO, single-crystal X-ray refinement at 60 K.
+# Transcribed from I. K. Shamova et al., Chem. Mater. 38, 3727 (2026),
+# doi:10.1021/acs.chemmater.6c00310, Supporting Information: cell from
+# Table S1a, atomic coordinates and U(eq) from Table S1b.
+data_beta_Fe2SeO_60K
+_chemical_formula_sum            'Fe2 O Se'
+_cell_measurement_temperature    60
+_cell_length_a                   9.8090(1)
+_cell_length_b                   9.8090(1)
+_cell_length_c                   6.9294(1)
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                120
+_space_group_name_H-M_alt        'P 32'
+_space_group_IT_number           145
+loop_
+_space_group_symop_operation_xyz
+'x, y, z'
+'-y, x-y, z+2/3'
+'-x+y, -x, z+1/3'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_U_iso_or_equiv
+Se1  Se     0.2126(1)    0.4403(1)    0.8529(1)  0.004(1)
+Se2  Se     0.5557(1)    0.1121(1)    0.8236(1)  0.004(1)
+Se3  Se     0.2287(1)    0.1237(1)    0.5099(1)  0.004(1)
+Fe1  Fe     0.5299(1)    0.2370(1)    0.5196(1)  0.005(1)
+Fe2  Fe     0.0982(1)    0.1385(1)    0.8153(1)  0.005(1)
+Fe3  Fe     0.3873(1)    0.4572(1)    0.5668(1)  0.005(1)
+Fe4  Fe    -0.1345(1)    0.2697(1)    0.7782(1)  0.005(1)
+Fe5  Fe     0.4065(1)    0.5919(1)    1.1355(1)  0.005(1)
+Fe6  Fe     0.1784(1)    0.2605(1)    1.2135(1)  0.005(1)
+O1   O      0.5728(3)    0.4428(3)    0.6319(5)  0.006(1)
+O2   O      0.1993(3)    0.1091(3)    1.0402(5)  0.005(1)
+O3   O      0.2578(3)    0.4628(3)    0.3457(5)  0.005(1)

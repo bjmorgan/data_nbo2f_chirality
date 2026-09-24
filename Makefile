@@ -40,6 +40,10 @@ ORBIT_REPS := $(wildcard data/structures/orbit_representatives/orbit_*.vasp)
 # ---- structural order-parameter reference values (SI table) ----
 OP_REFS := build/structural_ops/op_reference_values.csv
 
+# ---- beta-Fe2SeO against the twelve orbits ----
+FE2SEO_CIFS  := $(wildcard data/structures/beta_fe2seo/*.cif)
+FE2SEO_MATCH := build/structures/fe2seo_orbit_match.csv
+
 # ---- cluster expansion ----
 # The training set and the fitted model are committed, so that the deposit holds
 # the model the simulations actually sampled; they are also rebuilt from the DFT
@@ -48,8 +52,8 @@ CE_TRAIN := data/ce/training_set_refitB_n96.json
 CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 
-.PHONY: all rewl dft refs ce figures clean
-all: figures refs ce
+.PHONY: all rewl dft refs fe2seo ce figures clean
+all: figures refs fe2seo ce
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -93,6 +97,14 @@ refs: $(OP_REFS)
 
 $(OP_REFS): workflow/structural_ops/generate_op_references.py
 	cd workflow/structural_ops && $(PY) generate_op_references.py
+
+# ===== beta-Fe2SeO =====
+## fe2seo: map the iron/vacancy order of beta-Fe2SeO onto the anion labelling and
+## identify which of the twelve orbits it is
+fe2seo: $(FE2SEO_MATCH)
+
+$(FE2SEO_MATCH): $(FE2SEO_CIFS) $(ORBIT_REPS) workflow/structures/fe2seo_orbit_match.py
+	cd workflow/structures && $(PY) fe2seo_orbit_match.py
 
 # ===== cluster expansion =====
 ## ce: DFT energies -> training set -> fitted model -> cross-validated RMSE,
