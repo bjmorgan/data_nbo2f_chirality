@@ -37,6 +37,10 @@ ORBIT_CO  := $(DFT_BUILD)/orbit_chain_order.csv
 DFT_CLASS := $(DFT_BUILD)/class_summary.csv
 ORBIT_REPS := $(wildcard data/structures/orbit_representatives/orbit_*.vasp)
 
+# ---- r2SCAN single points on the twelve orbits ----
+R2SCAN_OUTCARS := $(wildcard $(DFT_DATA)/3x3x3_r2scan/config_*/OUTCAR)
+R2SCAN_LADDER  := $(DFT_BUILD)/r2scan_ladder.csv
+
 # ---- structural order-parameter reference values (SI table) ----
 OP_REFS := build/structural_ops/op_reference_values.csv
 
@@ -52,8 +56,8 @@ CE_TRAIN := data/ce/training_set_refitB_n96.json
 CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 
-.PHONY: all rewl dft refs fe2seo ce figures clean
-all: figures refs fe2seo ce
+.PHONY: all rewl dft r2scan refs fe2seo ce figures clean
+all: figures refs r2scan fe2seo ce
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -88,6 +92,13 @@ $(DFT_CLASS): $(DFT_OPS) workflow/dft/dft_ops.py
 
 $(ORBIT_CO): $(DFT_OPS) $(ORBIT_REPS) workflow/dft/orbit_chain_order.py
 	cd workflow/dft && $(PY) orbit_chain_order.py
+
+## r2scan: the ordering of the twelve orbits in r2SCAN against PBEsol, from
+## single points at the relaxed PBEsol geometries
+r2scan: $(R2SCAN_LADDER)
+
+$(R2SCAN_LADDER): $(R2SCAN_OUTCARS) $(DFT_OPS) $(ORBIT_REPS) workflow/dft/r2scan_ladder.py
+	cd workflow/dft && $(PY) r2scan_ladder.py
 
 # ===== structural order-parameter references =====
 ## refs: ground-state and random-limit reference values for the SI table.

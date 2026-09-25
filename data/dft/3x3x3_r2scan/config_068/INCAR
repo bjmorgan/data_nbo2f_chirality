@@ -1,0 +1,28 @@
+ISTART = 0
+
+# parallelisation
+NCORE  = 8
+KPAR   = 1
+
+# electronic relaxation: as the PBEsol 3x3x3 set, with the functional changed
+PREC     = Accurate
+ALGO     = Normal
+ENCUT    = 600
+NELM     = 200
+EDIFF    = 1E-06
+METAGGA  = R2SCAN
+LMIXTAU  = .TRUE.
+LASPH    = .TRUE.
+LREAL    = Auto
+ADDGRID  = .TRUE.
+ISMEAR   = 0
+SIGMA    = 0.05
+
+# single point at the relaxed PBEsol geometry
+NSW    = 0
+IBRION = -1
+ISYM   = 0
+
+# output
+LWAVE  = .FALSE.
+LCHARG = .FALSE.

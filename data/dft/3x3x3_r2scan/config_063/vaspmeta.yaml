@@ -1,0 +1,8 @@
+title: NbO2F 3x3x3 config_063, r2SCAN single point
+description: r2SCAN single point at the relaxed PBEsol geometry of a 3x3x3 supercell of NbO2F
+notes: >-
+  Orbit 11 (P3_121). POSCAR is
+  the relaxed PBEsol structure of 3x3x3/config_063; the k-point mesh, cutoff and
+  projection settings match the PBEsol set, so only the functional differs. The
+  PBEsol energy at this geometry is the TOTEN of 3x3x3/config_063/OUTCAR.
+status: finished
