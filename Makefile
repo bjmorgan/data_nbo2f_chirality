@@ -45,9 +45,11 @@ R2SCAN_LADDER  := $(DFT_BUILD)/r2scan_ladder.csv
 TAO2F_OUTCARS := $(wildcard $(DFT_DATA)/TaO2F_3x3x3/config_*/OUTCAR)
 TAO2F         := $(DFT_BUILD)/tao2f_comparison.csv
 
-# ---- 3x3x6 stackings of the P3_121 helix ----
-STACK_OUTCARS := $(wildcard $(DFT_DATA)/3x3x6/stack_*/OUTCAR)
-TWINS         := $(DFT_BUILD)/twin_stackings.csv
+# ---- 3x3x6: stackings of the P3_121 helix and every achiral arrangement ----
+STACK_OUTCARS  := $(wildcard $(DFT_DATA)/3x3x6/stack_*/OUTCAR)
+TWINS          := $(DFT_BUILD)/twin_stackings.csv
+ACHIRAL_INPUTS := $(wildcard $(DFT_DATA)/3x3x6/*/OUTCAR) $(wildcard $(DFT_DATA)/3x3x6/*/POSCAR.init)
+ACHIRAL        := $(DFT_BUILD)/achiral_3x3x6.csv
 
 # ---- structural order-parameter reference values (SI table) ----
 OP_REFS := build/structural_ops/op_reference_values.csv
@@ -64,8 +66,8 @@ CE_TRAIN := data/ce/training_set_refitB_n96.json
 CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 
-.PHONY: all rewl dft r2scan tao2f twins refs fe2seo ce figures clean
-all: figures refs r2scan tao2f twins fe2seo ce
+.PHONY: all rewl dft r2scan tao2f twins achiral refs fe2seo ce figures clean
+all: figures refs r2scan tao2f twins achiral fe2seo ce
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -121,6 +123,14 @@ twins: $(TWINS)
 
 $(TWINS): $(STACK_OUTCARS) workflow/dft/twin_stackings.py
 	cd workflow/dft && $(PY) twin_stackings.py
+
+## achiral: every achiral arrangement on the 3x3x6 cell that obeys both rules,
+## relative to the homochiral helix, in DFT, in the cluster expansion, and as
+## the mean of its 3x3x3 blocks
+achiral: $(ACHIRAL)
+
+$(ACHIRAL): $(ACHIRAL_INPUTS) $(DFT_OPS) $(CE_MODEL) methods/dft/enumerate_3x3x6.py methods/dft/build_stackings.py workflow/dft/achiral_3x3x6.py
+	cd workflow/dft && $(PY) achiral_3x3x6.py
 
 # ===== structural order-parameter references =====
 ## refs: ground-state and random-limit reference values for the SI table.
