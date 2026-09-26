@@ -1,0 +1,6 @@
+title: NbO2F 3x3x3 config_072, r2SCAN relaxation
+description: Full geometry optimisation of a 3x3x3 supercell of NbO2F with r2SCAN
+notes: >-
+  Orbit 11 (P3_121). Starting structure: the relaxed PBEsol structure of 3x3x3/config_072.
+  The k-point mesh is that of the PBEsol set.
+status: finished

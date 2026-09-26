@@ -37,8 +37,9 @@ ORBIT_CO  := $(DFT_BUILD)/orbit_chain_order.csv
 DFT_CLASS := $(DFT_BUILD)/class_summary.csv
 ORBIT_REPS := $(wildcard data/structures/orbit_representatives/orbit_*.vasp)
 
-# ---- r2SCAN single points on the twelve orbits ----
-R2SCAN_OUTCARS := $(wildcard $(DFT_DATA)/3x3x3_r2scan/config_*/OUTCAR)
+# ---- r2SCAN single points and relaxations on the twelve orbits ----
+R2SCAN_OUTCARS := $(wildcard $(DFT_DATA)/3x3x3_r2scan/config_*/OUTCAR) \
+                  $(wildcard $(DFT_DATA)/3x3x3_r2scan_relax/config_*/OUTCAR)
 R2SCAN_LADDER  := $(DFT_BUILD)/r2scan_ladder.csv
 
 # ---- 3x3x6 stackings of the P3_121 helix ----
@@ -98,7 +99,7 @@ $(ORBIT_CO): $(DFT_OPS) $(ORBIT_REPS) workflow/dft/orbit_chain_order.py
 	cd workflow/dft && $(PY) orbit_chain_order.py
 
 ## r2scan: the ordering of the twelve orbits in r2SCAN against PBEsol, from
-## single points at the relaxed PBEsol geometries
+## single points at the relaxed PBEsol geometries and from r2SCAN relaxations
 r2scan: $(R2SCAN_LADDER)
 
 $(R2SCAN_LADDER): $(R2SCAN_OUTCARS) $(DFT_OPS) $(ORBIT_REPS) workflow/dft/r2scan_ladder.py
