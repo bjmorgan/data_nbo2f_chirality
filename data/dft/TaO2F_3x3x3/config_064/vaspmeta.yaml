@@ -1,0 +1,8 @@
+title: TaO2F 3x3x3 config_064
+description: Full geometry optimisation of a 3x3x3 supercell of TaO2F
+notes: >-
+  The O/F arrangement of NbO2F 3x3x3/config_064 (cis + OOF orbit 1 (P1); NbO2F energy
+  1.726 meV/atom above its ground state), with Ta in place of Nb.
+  Started from the ideal cubic structure (POSCAR.init), with the INCAR and KPOINTS
+  of the NbO2F 3x3x3 set.
+status: finished

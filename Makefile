@@ -41,6 +41,10 @@ ORBIT_REPS := $(wildcard data/structures/orbit_representatives/orbit_*.vasp)
 R2SCAN_OUTCARS := $(wildcard $(DFT_DATA)/3x3x3_r2scan/config_*/OUTCAR)
 R2SCAN_LADDER  := $(DFT_BUILD)/r2scan_ladder.csv
 
+# ---- TaO2F against NbO2F on paired configurations ----
+TAO2F_OUTCARS := $(wildcard $(DFT_DATA)/TaO2F_3x3x3/config_*/OUTCAR)
+TAO2F         := $(DFT_BUILD)/tao2f_comparison.csv
+
 # ---- 3x3x6 stackings of the P3_121 helix ----
 STACK_OUTCARS := $(wildcard $(DFT_DATA)/3x3x6/stack_*/OUTCAR)
 TWINS         := $(DFT_BUILD)/twin_stackings.csv
@@ -60,8 +64,8 @@ CE_TRAIN := data/ce/training_set_refitB_n96.json
 CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 
-.PHONY: all rewl dft r2scan twins refs fe2seo ce figures clean
-all: figures refs r2scan twins fe2seo ce
+.PHONY: all rewl dft r2scan tao2f twins refs fe2seo ce figures clean
+all: figures refs r2scan tao2f twins fe2seo ce
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -103,6 +107,13 @@ r2scan: $(R2SCAN_LADDER)
 
 $(R2SCAN_LADDER): $(R2SCAN_OUTCARS) $(DFT_OPS) $(ORBIT_REPS) workflow/dft/r2scan_ladder.py
 	cd workflow/dft && $(PY) r2scan_ladder.py
+
+## tao2f: TaO2F against NbO2F on paired 3x3x3 configurations: the energies of
+## the tiers and the ordering of the twelve orbits
+tao2f: $(TAO2F)
+
+$(TAO2F): $(TAO2F_OUTCARS) $(DFT_OPS) workflow/dft/tao2f_comparison.py
+	cd workflow/dft && $(PY) tao2f_comparison.py
 
 ## twins: the 3x3x6 stackings of the P3_121 helix, relative to the homochiral one,
 ## and the energy per twin boundary

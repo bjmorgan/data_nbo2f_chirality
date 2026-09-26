@@ -9,7 +9,7 @@ Authors:
 
 This repository contains the data and analysis code for &ldquo;Structural Chirality from Short-Range Order in Heteroanionic Materials&rdquo; \[1\].
 
-The dataset contains density-functional energies for a set of anion orderings in NbO<sub>2</sub>F, a cluster expansion model fitted to those energies, and densities of states generated from a series of replica-exchange Wang&ndash;Landau simulations of that cluster expansion across five supercell sizes, together with code to process these data and produce the manuscript figures.
+The dataset contains density-functional energies for a set of anion orderings in NbO<sub>2</sub>F and for a smaller comparison set in TaO<sub>2</sub>F, a cluster expansion model fitted to those energies, and densities of states generated from a series of replica-exchange Wang&ndash;Landau simulations of that cluster expansion across five supercell sizes, together with code to process these data and produce the manuscript figures.
 
 To run the complete data analysis, run the following commands from the top level directory:
 ```
@@ -55,7 +55,7 @@ conda env create -f environment.yml
 
 ## Data processing workflow
 
-Data processing is managed using `make`, and uses the scripts in the `workflow` and `figures` directories. From the deposited data, the workflow computes the temperature-dependent averages of the structural order parameters, the transition temperatures of each simulation and their extrapolation to infinite system size, the order parameters of each calculated configuration together with their ground-state and random-limit reference values, the ordering of the twelve orbits in r2SCAN against PBEsol, the energies of the stackings of the ground-state ordering against the homochiral one, which of the twelve orbits the iron/vacancy order of &beta;-Fe<sub>2</sub>SeO belongs to, and every plotted manuscript figure. The full analysis can be rerun with:
+Data processing is managed using `make`, and uses the scripts in the `workflow` and `figures` directories. From the deposited data, the workflow computes the temperature-dependent averages of the structural order parameters, the transition temperatures of each simulation and their extrapolation to infinite system size, the order parameters of each calculated configuration together with their ground-state and random-limit reference values, the ordering of the twelve orbits in r2SCAN against PBEsol, the energies of the TaO<sub>2</sub>F configurations against their NbO<sub>2</sub>F counterparts, the energies of the stackings of the ground-state ordering against the homochiral one, which of the twelve orbits the iron/vacancy order of &beta;-Fe<sub>2</sub>SeO belongs to, and every plotted manuscript figure. The full analysis can be rerun with:
 ```
 make clean
 make
