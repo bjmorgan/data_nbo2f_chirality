@@ -1,0 +1,9 @@
+title: NbO2F 3x3x6 stacking 000111
+description: Full geometry optimisation of a 3x3x6 supercell of NbO2F
+notes: >-
+  Stacking 000111 of the P3_121 helix: (001) cation planes marked 1 have their x and y
+  labels exchanged (the P3_221 enantiomer). Achiral (C2/c), with cis and OOF order
+  everywhere; 2 twin boundaries per cell, three planes apart.
+  The k-point mesh folds onto the Monkhorst-Pack 2x2x2 points of the 3x3x3 set.
+  Starting structure from methods/dft/build_stackings.py in the data repository.
+status: finished
