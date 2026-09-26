@@ -1,7 +1,7 @@
 # Density-functional calculations
 
 This directory contains the VASP calculations of anion orderings in
-NbO<sub>2</sub>F, in five sets that serve different purposes.
+NbO<sub>2</sub>F, in four sets that serve different purposes.
 
 - `3x3x3/`: 92 configurations in the 3&times;3&times;3 supercell, spanning random
   anion placements, period-three orderings with random inter-chain phase, and the
@@ -13,15 +13,12 @@ NbO<sub>2</sub>F, in five sets that serve different purposes.
   `P3121_tiled` is the tiled ground state, `buss_*` and `config_*` were proposed
   by the active-learning search described in
   `docs/cluster-expansion-workflow.md`.
-- `3x3x3_r2scan/`: r2SCAN single points on the twelve orbit representatives of
-  `3x3x3/`, with orbit 11 in two settings. Each is at the relaxed PBEsol geometry
-  of the `3x3x3/` configuration of the same name, with the same *k*-point mesh and
-  numerical settings, so the two energies at each geometry differ only in the
-  exchange&ndash;correlation functional. They test whether the ordering of the
-  orbits depends on the functional.
-- `3x3x3_r2scan_relax/`: r2SCAN full geometry optimisations of the same
-  configurations, each starting from the relaxed PBEsol structure of the
-  configuration of the same name in `3x3x3/`, with the same *k*-point mesh.
+- `3x3x3_r2scan/`: r2SCAN full geometry optimisations of the twelve orbit
+  representatives of `3x3x3/`, with orbit 11 in two settings. Each starts from
+  the relaxed PBEsol structure of the `3x3x3/` configuration of the same name,
+  with the same *k*-point mesh and numerical settings, so the two sets differ
+  only in the exchange&ndash;correlation functional. They test whether the
+  ordering of the orbits depends on the functional.
 - `3x3x6/`: Stackings of the *P*3<sub>1</sub>21 ordering in the
   3&times;3&times;6 supercell. In each (001) plane of cations the ordering keeps
   its labelling or takes that of its mirror image, *P*3<sub>2</sub>21, so a change
@@ -39,10 +36,8 @@ Each configuration directory holds:
 - `INCAR`, `KPOINTS`: The calculation parameters.
 - `POSCAR.init`: The ideal, undistorted starting structure &mdash; the anion
   ordering itself, and the structure the order parameters are computed from.
-- `POSCAR`: The relaxed structure. For the single points in `3x3x3_r2scan/` it is
-  the input geometry, taken from the PBEsol relaxation. Neither `3x3x3_r2scan/`
-  nor `3x3x3_r2scan_relax/` has a `POSCAR.init`; the ideal structure is that of
-  the configuration of the same name in `3x3x3/`.
+- `POSCAR`: The relaxed structure. `3x3x3_r2scan/` has no `POSCAR.init`; the
+  ideal structure is that of the configuration of the same name in `3x3x3/`.
 - `OUTCAR`: The calculation output, from which the energies are read.
 - `vaspmeta.yaml`: Provenance notes for the calculation.
 - `POTCAR.spec`: The pseudopotentials used, one per species, with their hashes.

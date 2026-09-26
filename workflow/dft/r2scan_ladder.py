@@ -1,21 +1,15 @@
 """Ordering of the twelve cis + OOF orbits in r2SCAN compared with PBEsol.
 
-For each orbit representative in ``data/dft/3x3x3``:
-  - ``data/dft/3x3x3_r2scan`` holds an r2SCAN single point at its relaxed PBEsol
-    geometry, with the same k-point mesh and numerical settings, so the two
-    energies at each geometry differ only in the exchange-correlation functional.
-    The PBEsol energy at that geometry is the energy of the final PBEsol run,
-    which converged in a single ionic step from it;
-  - ``data/dft/3x3x3_r2scan_relax`` holds its full r2SCAN relaxation from that
-    geometry, with the same k-point mesh, whose final run converged in a single
-    ionic step.
-Orbit 11 (P3_121) is represented twice, in two settings.
+For each orbit representative in ``data/dft/3x3x3``, ``data/dft/3x3x3_r2scan``
+holds its full r2SCAN relaxation, started from the relaxed PBEsol structure, with
+the same k-point mesh and numerical settings. The final run of each relaxation
+converged in a single ionic step. Orbit 11 (P3_121) is represented twice, in two
+settings.
 
 Writes r2scan_ladder.csv: for each configuration, its orbit, the space group of
-the orbit, and its energy above the lowest orbit-11 configuration (meV/atom) in
-PBEsol, in r2SCAN at the PBEsol geometry, and in r2SCAN relaxed, in ascending
-PBEsol order. Prints whether orbit 11 is lowest in each and the rank
-correlation of the other eleven orbits with PBEsol.
+the orbit, and its energy above the lowest orbit-11 configuration in each
+functional (meV/atom), in ascending PBEsol order. Prints whether orbit 11 is
+lowest in both functionals and the rank correlation of the other eleven orbits.
 
     python r2scan_ladder.py
 """
@@ -56,25 +50,23 @@ def main() -> None:
             "orbit": orbit,
             "space_group": space_group[orbit],
             "pbesol": energy_per_atom(DFT / "3x3x3" / d.name / "OUTCAR"),
-            "r2scan_single_point": energy_per_atom(d / "OUTCAR"),
-            "r2scan_relaxed": energy_per_atom(DFT / "3x3x3_r2scan_relax" / d.name / "OUTCAR"),
+            "r2scan": energy_per_atom(d / "OUTCAR"),
         })
     df = pd.DataFrame(rows)
-    ladders = ("pbesol", "r2scan_single_point", "r2scan_relaxed")
-    for ladder in ladders:
-        ground = df.loc[df.orbit == 11, ladder].min()
-        df[f"{ladder}_meV_per_atom"] = 1000.0 * (df[ladder] - ground)
+    for functional in ("pbesol", "r2scan"):
+        ground = df.loc[df.orbit == 11, functional].min()
+        df[f"{functional}_meV_per_atom"] = 1000.0 * (df[functional] - ground)
     df = df.sort_values("pbesol_meV_per_atom")[
-        ["config", "orbit", "space_group"] + [f"{ladder}_meV_per_atom" for ladder in ladders]]
+        ["config", "orbit", "space_group", "pbesol_meV_per_atom", "r2scan_meV_per_atom"]]
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUT, index=False, float_format="%.6f")
 
-    others = {ladder: df.loc[df.orbit != 11, f"{ladder}_meV_per_atom"] for ladder in ladders}
+    others = df[df.orbit != 11]
+    p, r = others.pbesol_meV_per_atom, others.r2scan_meV_per_atom
     print(df.to_string(index=False, float_format=lambda x: f"{x:.3f}"))
-    print("\norbit 11 lowest: " + ", ".join(f"{ladder} {bool((e > 0).all())}" for ladder, e in others.items()))
-    print("rank correlation of the other eleven orbits with PBEsol: " + ", ".join(
-        f"{ladder} {others['pbesol'].rank().corr(others[ladder].rank()):.2f}" for ladder in ladders[1:]))
+    print(f"\norbit 11 lowest: PBEsol {bool((p > 0).all())}, r2SCAN {bool((r > 0).all())}")
+    print(f"rank correlation of the other eleven orbits: {p.rank().corr(r.rank()):.2f}")
     print(f"wrote {OUT}")
 
 

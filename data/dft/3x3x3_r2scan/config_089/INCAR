@@ -18,9 +18,11 @@ ADDGRID  = .TRUE.
 ISMEAR   = 0
 SIGMA    = 0.05
 
-# single point at the relaxed PBEsol geometry
-NSW    = 0
-IBRION = -1
+# ionic relaxation
+EDIFFG = -0.01
+NSW    = 2000
+IBRION = 1
+ISIF   = 3
 ISYM   = 0
 
 # output
