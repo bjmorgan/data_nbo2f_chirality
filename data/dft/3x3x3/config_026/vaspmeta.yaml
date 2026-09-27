@@ -1,8 +1,5 @@
 title: NbO2F 3x3x3 config_026
 description: Full geometry optimisation of a 3x3x3 supercell of NbO2F
 notes: >-
-  Extracted from training JSON.
-  Original path: results_004
-  Original DFT energy: -8.660020 eV/atom.
-  To be re-run with standardised settings.
-status: not started
+  Random O/F arrangement, with no period-three chain order.
+status: finished

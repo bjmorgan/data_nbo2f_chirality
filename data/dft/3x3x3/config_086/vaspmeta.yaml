@@ -1,7 +1,5 @@
 title: NbO2F 3x3x3 config_086
 description: Full geometry optimisation of a 3x3x3 supercell of NbO2F
 notes: >-
-  BUSS active learning candidate (bootstrap uncertainty selection).
-  Source: pt_buss.py --n-sc 3 --start random, candidate 5.
-  To be run with standardised PBEsol settings.
-status: not started
+  Random O/F arrangement, with no period-three chain order.
+status: finished
