@@ -15,14 +15,11 @@ Runnable to rebuild the committee; not part of the `make` figure pipeline.
 """
 from __future__ import annotations
 
-import warnings
 from pathlib import Path
 
 import numpy as np
-from sklearn.linear_model import ARDRegression
-from sklearn.preprocessing import StandardScaler
 
-from ce_fit import THRESHOLD_LAMBDA, cluster_space, fit_data
+from ce_fit import ardr_posterior, cluster_space, fit_data
 
 HERE = Path(__file__).resolve().parent
 TRAINING_SET = HERE.parents[1] / "data" / "ce" / "training_set_refitB_n96.json"
@@ -35,26 +32,8 @@ def main() -> None:
     cs = cluster_space()
     A_raw, y_raw = fit_data(cs, TRAINING_SET)
     n_orbits = A_raw.shape[1]
-
-    # Same standardised ARDR as the production fit, but keep the fitted model so
-    # its posterior covariance (sigma_) can be read and rescaled to real units.
-    A = A_raw.copy()
-    scaler = StandardScaler(copy=False, with_mean=False, with_std=True)
-    scaler.fit_transform(A)
-    col_scale = scaler.scale_
-    y_std = float(np.std(y_raw))
-    model = ARDRegression(threshold_lambda=THRESHOLD_LAMBDA, fit_intercept=False)
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        model.fit(A, y_raw / y_std)
-
-    coef = (model.coef_ * y_std) / col_scale
-    active_mask = model.lambda_ < THRESHOLD_LAMBDA
+    coef, active_mask, sigma = ardr_posterior(A_raw, y_raw)
     n_active = int(active_mask.sum())
-    active_scale = y_std / col_scale[active_mask]
-    sigma = np.asarray(model.sigma_) * np.outer(active_scale, active_scale)
-    if sigma.shape[0] != n_active:
-        raise RuntimeError(f"posterior covariance {sigma.shape} does not match {n_active} active ECIs")
 
     rng = np.random.default_rng(SEED)
     samples = np.zeros((N_SAMPLES, n_orbits))

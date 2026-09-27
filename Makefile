@@ -65,9 +65,10 @@ FE2SEO_MATCH := build/structures/fe2seo_orbit_match.csv
 CE_TRAIN := data/ce/training_set_refitB_n96.json
 CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
+CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
 
-.PHONY: all rewl dft r2scan tao2f twins achiral refs fe2seo ce figures clean
-all: figures refs r2scan tao2f twins achiral fe2seo ce
+.PHONY: all rewl dft r2scan tao2f twins achiral refs fe2seo ce cedft figures clean
+all: figures refs r2scan tao2f twins achiral fe2seo ce cedft
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -164,17 +165,29 @@ $(CE_LOOCV): $(CE_TRAIN) methods/cluster_expansion/loocv.py methods/cluster_expa
 	@mkdir -p $(dir $@)
 	cd methods/cluster_expansion && $(PY) loocv.py
 
+## cedft: the cluster expansion against DFT on the low-energy manifold -- the
+## orbits, the low-energy training structures (with held-out predictions) and
+## the 3x3x6 classes -- with posterior uncertainties (SI figure)
+cedft: $(CE_VS_DFT)
+
+$(CE_VS_DFT): $(CE_TRAIN) $(CE_MODEL) $(DFT_OPS) $(ORBIT_REPS) $(wildcard $(DFT_DATA)/3x3x3/config_*/OUTCAR) $(ACHIRAL_INPUTS) methods/cluster_expansion/ce_fit.py workflow/ce/ce_vs_dft.py
+	@mkdir -p $(dir $@)
+	cd workflow/ce && $(PY) ce_vs_dft.py
+
 # ===== figures =====
 figures: figures/fig_finite_temperature.pdf figures/fig_si_pe_size.pdf \
          figures/fig_dft_coherence.pdf figures/fig_orbit_gallery.pdf \
          figures/fig_p3121_structure.pdf figures/fig_p3121_legend.pdf \
-         figures/fig_reo3_parent.pdf
+         figures/fig_reo3_parent.pdf figures/fig_si_ce_vs_dft.pdf
 
 figures/fig_finite_temperature.pdf: $(RWL_BUILD)/tc_estimators.csv $(RWL_BUILD)/fss_fit.txt $(CANON) workflow/figures/fig_finite_temperature.py
 	cd workflow/figures && $(PY) fig_finite_temperature.py
 
 figures/fig_si_pe_size.pdf: $(CANON) workflow/figures/fig_si_pe_size.py
 	cd workflow/figures && $(PY) fig_si_pe_size.py
+
+figures/fig_si_ce_vs_dft.pdf: $(CE_VS_DFT) workflow/figures/fig_si_ce_vs_dft.py
+	cd workflow/figures && $(PY) fig_si_ce_vs_dft.py
 
 figures/fig_dft_coherence.pdf: $(DFT_OPS) workflow/figures/fig_dft_coherence.py
 	cd workflow/figures && $(PY) fig_dft_coherence.py
