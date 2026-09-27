@@ -41,6 +41,9 @@ ORBIT_REPS := $(wildcard data/structures/orbit_representatives/orbit_*.vasp)
 R2SCAN_OUTCARS := $(wildcard $(DFT_DATA)/3x3x3_r2scan/config_*/OUTCAR)
 R2SCAN_LADDER  := $(DFT_BUILD)/r2scan_ladder.csv
 
+# ---- point-charge electrostatics of the twelve orbits ----
+ELECTROSTATICS := $(DFT_BUILD)/orbit_electrostatics.csv
+
 # ---- TaO2F against NbO2F on paired configurations ----
 TAO2F_OUTCARS := $(wildcard $(DFT_DATA)/TaO2F_3x3x3/config_*/OUTCAR)
 TAO2F         := $(DFT_BUILD)/tao2f_comparison.csv
@@ -67,8 +70,8 @@ CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
 
-.PHONY: all rewl dft r2scan tao2f twins achiral refs fe2seo ce cedft figures clean
-all: figures refs r2scan tao2f twins achiral fe2seo ce cedft
+.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral refs fe2seo ce cedft figures clean
+all: figures refs r2scan tao2f electrostatics twins achiral fe2seo ce cedft
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -110,6 +113,13 @@ r2scan: $(R2SCAN_LADDER)
 
 $(R2SCAN_LADDER): $(R2SCAN_OUTCARS) $(DFT_OPS) $(ORBIT_REPS) workflow/dft/r2scan_ladder.py
 	cd workflow/dft && $(PY) r2scan_ladder.py
+
+## electrostatics: point-charge electrostatics of the twelve orbits against
+## their DFT energies
+electrostatics: $(ELECTROSTATICS)
+
+$(ELECTROSTATICS): $(DFT_OPS) $(ORBIT_REPS) workflow/dft/orbit_electrostatics.py
+	cd workflow/dft && $(PY) orbit_electrostatics.py
 
 ## tao2f: TaO2F against NbO2F on paired 3x3x3 configurations: the energies of
 ## the tiers and the ordering of the twelve orbits

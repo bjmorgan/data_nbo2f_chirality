@@ -44,6 +44,7 @@ The analysis workflow has the following Python module dependencies:
 - [nbo2f_analysis](https://github.com/bjmorgan/nbo2f_analysis)
 - [numpy](https://pypi.org/project/numpy/)
 - [pandas](https://pypi.org/project/pandas/)
+- [pymatgen](https://pypi.org/project/pymatgen/)
 - [scikit-learn](https://pypi.org/project/scikit-learn/)
 - [scipy](https://pypi.org/project/scipy/)
 - [trainstation](https://pypi.org/project/trainstation/)
@@ -55,7 +56,7 @@ conda env create -f environment.yml
 
 ## Data processing workflow
 
-Data processing is managed using `make`, and uses the scripts in the `workflow` and `figures` directories. From the deposited data, the workflow computes the temperature-dependent averages of the structural order parameters, the transition temperatures of each simulation and their extrapolation to infinite system size, the order parameters of each calculated configuration together with their ground-state and random-limit reference values, the ordering of the twelve orbits in r2SCAN against PBEsol, the energies of the TaO<sub>2</sub>F configurations against their NbO<sub>2</sub>F counterparts, the energies of the stackings of the ground-state ordering against the homochiral one, the energies of every achiral arrangement on the 3&times;3&times;6 cell that obeys both ordering rules, the cluster-expansion energies against DFT on the low-energy manifold, in and out of the training set, which of the twelve orbits the iron/vacancy order of &beta;-Fe<sub>2</sub>SeO belongs to, and every plotted manuscript figure. The full analysis can be rerun with:
+Data processing is managed using `make`, and uses the scripts in the `workflow` and `figures` directories. From the deposited data, the workflow computes the temperature-dependent averages of the structural order parameters, the transition temperatures of each simulation and their extrapolation to infinite system size, the order parameters of each calculated configuration together with their ground-state and random-limit reference values, the ordering of the twelve orbits in r2SCAN against PBEsol, the energies of the TaO<sub>2</sub>F configurations against their NbO<sub>2</sub>F counterparts, the point-charge electrostatic energies of the twelve orbits against their DFT energies, the energies of the stackings of the ground-state ordering against the homochiral one, the energies of every achiral arrangement on the 3&times;3&times;6 cell that obeys both ordering rules, the cluster-expansion energies against DFT on the low-energy manifold, in and out of the training set, which of the twelve orbits the iron/vacancy order of &beta;-Fe<sub>2</sub>SeO belongs to, and every plotted manuscript figure. The full analysis can be rerun with:
 ```
 make clean
 make
