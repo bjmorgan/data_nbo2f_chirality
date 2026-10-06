@@ -51,9 +51,11 @@ TAO2F         := $(DFT_BUILD)/tao2f_comparison.csv
 # ---- 3x3x6: stackings of the P3_121 helix and every achiral arrangement ----
 STACK_OUTCARS  := $(wildcard $(DFT_DATA)/3x3x6/stack_*/OUTCAR)
 TWINS          := $(DFT_BUILD)/twin_stackings.csv
-ACHIRAL_INPUTS := $(wildcard $(DFT_DATA)/3x3x6/*/OUTCAR) $(wildcard $(DFT_DATA)/3x3x6/*/POSCAR.init)
+ACHIRAL_INPUTS := $(wildcard $(DFT_DATA)/3x3x6/stack_*/OUTCAR) $(wildcard $(DFT_DATA)/3x3x6/stack_*/POSCAR.init) \
+                  $(wildcard $(DFT_DATA)/3x3x6/achiral_*/OUTCAR) $(wildcard $(DFT_DATA)/3x3x6/achiral_*/POSCAR.init)
 ACHIRAL        := $(DFT_BUILD)/achiral_3x3x6.csv
 CLASSES_336    := $(DFT_BUILD)/classes_3x3x6.csv
+CIS_NONOOF     := $(DFT_BUILD)/cis_nonoof_3x3x6.csv
 
 # ---- structural order-parameter reference values (SI table) ----
 OP_REFS := build/structural_ops/op_reference_values.csv
@@ -71,8 +73,8 @@ CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
 
-.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes refs fe2seo ce cedft figures clean
-all: figures refs r2scan tao2f electrostatics twins achiral classes fe2seo ce cedft
+.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof refs fe2seo ce cedft figures clean
+all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof fe2seo ce cedft
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -150,6 +152,14 @@ classes: $(CLASSES_336)
 
 $(CLASSES_336): $(ORBIT_REPS) $(CE_MODEL) methods/dft/enumerate_3x3x6.py methods/dft/build_stackings.py workflow/dft/classes_3x3x6.py
 	cd workflow/dft && $(PY) classes_3x3x6.py
+
+## cisnonoof: the lowest cis arrangements on the 3x3x6 cell that break OOF, against
+## the homochiral helix, in DFT and in the cluster expansion
+cisnonoof: $(CIS_NONOOF)
+
+$(CIS_NONOOF): $(wildcard $(DFT_DATA)/3x3x6/cis_nonoof_*/OUTCAR) $(wildcard $(DFT_DATA)/3x3x6/cis_nonoof_*/POSCAR.init) \
+               $(DFT_DATA)/3x3x6/stack_000000/OUTCAR $(DFT_DATA)/3x3x6/stack_000000/POSCAR.init $(CE_MODEL) workflow/dft/cis_nonoof_3x3x6.py
+	cd workflow/dft && $(PY) cis_nonoof_3x3x6.py
 
 # ===== structural order-parameter references =====
 ## refs: ground-state and random-limit reference values for the SI table.

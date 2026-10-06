@@ -21,8 +21,10 @@ for TaO<sub>2</sub>F.
   only in the exchange&ndash;correlation functional. They test whether the
   ordering of the orbits depends on the functional.
 - `3x3x6/`: Every class of achiral arrangement in the 3&times;3&times;6
-  supercell that obeys both ordering rules, fifteen in all, and the homochiral
-  *P*3<sub>1</sub>21 ordering for reference.
+  supercell that obeys both ordering rules, fifteen in all; the four
+  lowest-energy arrangements with cis coordination at every cation that break
+  the chain ordering; and the homochiral *P*3<sub>1</sub>21 ordering for
+  reference.
   - `stack_<s>` are stackings of the *P*3<sub>1</sub>21 ordering: in each (001)
     plane of cations the ordering keeps its labelling (0) or takes that of its
     mirror image, *P*3<sub>2</sub>21 (1), so a change between adjacent planes is
@@ -34,6 +36,11 @@ for TaO<sub>2</sub>F.
     increasing cluster-expansion energy. None contains a *P*3<sub>1</sub>21
     block. They are enumerated, and their starting structures generated, by
     `methods/dft/enumerate_3x3x6.py`.
+  - `cis_nonoof_NN` have exact cis coordination at every cation but not
+    period-three OOF order on every chain: two z-chains carry their two
+    fluorides one site apart (O&ndash;O&ndash;F&ndash;O&ndash;F&ndash;O). They are
+    the four classes of such arrangements on this cell with the lowest
+    cluster-expansion energy, numbered in that order.
 
   The *k*-point mesh folds onto the Monkhorst&ndash;Pack points of the `3x3x3/`
   set.

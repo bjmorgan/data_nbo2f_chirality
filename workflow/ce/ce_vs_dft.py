@@ -110,7 +110,7 @@ def main() -> None:
     helix = DFT / "3x3x6" / "stack_000000"
     e_helix = energy_per_atom(helix / "OUTCAR")
     cv_helix = cs.get_cluster_vector(ideal_on_reference(helix / "POSCAR.init"))
-    for d in sorted(p for p in (DFT / "3x3x6").iterdir() if p.is_dir() and p != helix):
+    for d in sorted(p for p in [*(DFT / "3x3x6").glob("stack_*"), *(DFT / "3x3x6").glob("achiral_*")] if p != helix):
         cv = cs.get_cluster_vector(ideal_on_reference(d / "POSCAR.init"))
         rows.append({"set": "3x3x6", "name": d.name, "orbit": np.nan, "in_training": in_training(cv),
                      "dft": 1e3 * (energy_per_atom(d / "OUTCAR") - e_helix), "ce": 1e3 * (cv - cv_helix) @ coef,

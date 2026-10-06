@@ -2,8 +2,9 @@
 
 data/dft/3x3x6 holds relaxations of every achiral class of arrangement on the 3x3x6
 cell that obeys both ordering rules (enumerated by methods/dft/enumerate_3x3x6.py):
-the stackings stack_<s> of the P3_121 helix and the classes achiral_NN. It also holds
-the homochiral helix, stack_000000, computed with the same settings in the same cell.
+the stackings stack_<s> of the P3_121 helix and the classes achiral_NN, which this script
+reads. It also holds the homochiral helix, stack_000000, computed with the same settings
+in the same cell.
 
 For each achiral class it reads the labelling from POSCAR.init and finds its space
 group and the orbits of its six three-plane windows. It compares the energy above
@@ -78,7 +79,7 @@ def main() -> None:
     e_helix, ce_helix = energy_per_atom(DATA / HELIX / "OUTCAR"), ce.predict(atoms_for_ce(helix))
 
     rows = []
-    for d in sorted(DATA.iterdir()):
+    for d in sorted([*DATA.glob("stack_*"), *DATA.glob("achiral_*")]):
         if not d.is_dir() or d.name == HELIX:
             continue
         L = labels_from_poscar(d / "POSCAR.init")

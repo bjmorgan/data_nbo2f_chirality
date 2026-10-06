@@ -1,0 +1,9 @@
+title: NbO2F 3x3x6 cis_nonoof_02
+description: Full geometry optimisation of a 3x3x6 supercell of NbO2F
+notes: >-
+  Arrangement (P1, chiral) with exact cis coordination at every Nb
+  but not OOF order on every chain: two z-chains carry their two F one site apart
+  (O-O-F-O-F-O), and every other chain is O-O-F. Cluster-expansion energy 1.528
+  meV/atom above the homochiral helix; the 2nd lowest
+  such class on this cell. The k-point mesh folds onto the Monkhorst-Pack 2x2x2 points of the 3x3x3 set.
+status: finished
