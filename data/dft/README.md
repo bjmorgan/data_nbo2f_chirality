@@ -40,7 +40,9 @@ for TaO<sub>2</sub>F.
     period-three OOF order on every chain: two z-chains carry their two
     fluorides one site apart (O&ndash;O&ndash;F&ndash;O&ndash;F&ndash;O). They are
     the four classes of such arrangements on this cell with the lowest
-    cluster-expansion energy, numbered in that order.
+    cluster-expansion energy, numbered in that order, found by an exhaustive
+    search of the cluster expansion over all such arrangements
+    (`methods/dft/cis_3x3x6.py`).
 
   The *k*-point mesh folds onto the Monkhorst&ndash;Pack points of the `3x3x3/`
   set.

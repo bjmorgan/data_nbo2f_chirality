@@ -56,6 +56,8 @@ ACHIRAL_INPUTS := $(wildcard $(DFT_DATA)/3x3x6/stack_*/OUTCAR) $(wildcard $(DFT_
 ACHIRAL        := $(DFT_BUILD)/achiral_3x3x6.csv
 CLASSES_336    := $(DFT_BUILD)/classes_3x3x6.csv
 CIS_NONOOF     := $(DFT_BUILD)/cis_nonoof_3x3x6.csv
+CIS_COUNT      := $(DFT_BUILD)/cis_count.csv
+CIS_SEARCH     := $(DFT_BUILD)/cis_classes_3x3x6.csv
 
 # ---- structural order-parameter reference values (SI table) ----
 OP_REFS := build/structural_ops/op_reference_values.csv
@@ -73,8 +75,8 @@ CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
 
-.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof refs fe2seo ce cedft figures clean
-all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof fe2seo ce cedft
+.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch refs fe2seo ce cedft figures clean
+all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch fe2seo ce cedft
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -160,6 +162,21 @@ cisnonoof: $(CIS_NONOOF)
 $(CIS_NONOOF): $(wildcard $(DFT_DATA)/3x3x6/cis_nonoof_*/OUTCAR) $(wildcard $(DFT_DATA)/3x3x6/cis_nonoof_*/POSCAR.init) \
                $(DFT_DATA)/3x3x6/stack_000000/OUTCAR $(DFT_DATA)/3x3x6/stack_000000/POSCAR.init $(CE_MODEL) workflow/dft/cis_nonoof_3x3x6.py
 	cd workflow/dft && $(PY) cis_nonoof_3x3x6.py
+
+## ciscount: the number of arrangements with exact cis coordination at every Nb on
+## the 3x3x3 and 3x3x6 cells, and how many are OOF on every chain
+ciscount: $(CIS_COUNT)
+
+$(CIS_COUNT): $(CLASSES_336) $(ORBIT_REPS) methods/dft/cis_3x3x6.py methods/dft/enumerate_3x3x6.py workflow/dft/cis_count_3x3x6.py
+	cd workflow/dft && $(PY) cis_count_3x3x6.py
+
+## cissearch: exhaustive cluster-expansion search over every exact-cis arrangement on
+## the 3x3x6 cell; the classes near the helix and the lowest of each kind of OOF break.
+## About seven minutes.
+cissearch: $(CIS_SEARCH)
+
+$(CIS_SEARCH): $(CE_MODEL) $(wildcard $(DFT_DATA)/3x3x6/*/POSCAR.init) methods/dft/cis_3x3x6.py methods/dft/build_stackings.py workflow/dft/cis_search_3x3x6.py
+	cd workflow/dft && $(PY) cis_search_3x3x6.py
 
 # ===== structural order-parameter references =====
 ## refs: ground-state and random-limit reference values for the SI table.
