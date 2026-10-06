@@ -137,12 +137,8 @@ def atoms_for_ce(L):
     return Atoms(sym, positions=np.array(pos) * A_CE, cell=np.diag(L.shape) * A_CE, pbc=True)
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("--out", type=Path, help="write achiral_NN/POSCAR.init here")
-    args = parser.parse_args()
-
-    orbit_of = valid_blocks()
+def enumerate_labellings(orbit_of) -> list[np.ndarray]:
+    """Every labelling of the 3x3x6 cell whose six three-plane windows are all valid blocks."""
     nxt = defaultdict(list)
     for p0, p1, p2 in orbit_of:
         nxt[(p0, p1)].append(p2)
@@ -152,14 +148,32 @@ def main() -> None:
             for p4 in nxt[(p2, p3)]:
                 for p5 in nxt[(p3, p4)]:
                     if (p4, p5, p0) in orbit_of and (p5, p0, p1) in orbit_of:
-                        solutions.append((p0, p1, p2, p3, p4, p5))
+                        solutions.append(np.stack([np.frombuffer(p, dtype=np.int64).reshape(3, 3)
+                                                   for p in (p0, p1, p2, p3, p4, p5)], axis=2))
+    return solutions
 
+
+def classify(solutions) -> dict[bytes, tuple[np.ndarray, int]]:
+    """Classes under the symmetry of the cell: canonical labelling and number of labellings in each."""
     classes = {}
-    for seq in solutions:
-        L = np.stack([np.frombuffer(p, dtype=np.int64).reshape(3, 3) for p in seq], axis=2)
-        key = canonical(L).tobytes()
-        if key not in classes:
-            classes[key] = canonical(L).astype(int)
+    for L in solutions:
+        C = canonical(L)
+        key = C.tobytes()
+        if key in classes:
+            classes[key] = (classes[key][0], classes[key][1] + 1)
+        else:
+            classes[key] = (C.astype(int), 1)
+    return classes
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser.add_argument("--out", type=Path, help="write achiral_NN/POSCAR.init here")
+    args = parser.parse_args()
+
+    orbit_of = valid_blocks()
+    solutions = enumerate_labellings(orbit_of)
+    classes = {key: L for key, (L, _) in classify(solutions).items()}
     stackings = {canonical(stacking_labels(s)).tobytes(): s for s in ("000000", "000111", "001011", "010101")}
 
     ce = ClusterExpansion.read(str(CE))

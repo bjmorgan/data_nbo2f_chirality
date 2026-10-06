@@ -53,6 +53,7 @@ STACK_OUTCARS  := $(wildcard $(DFT_DATA)/3x3x6/stack_*/OUTCAR)
 TWINS          := $(DFT_BUILD)/twin_stackings.csv
 ACHIRAL_INPUTS := $(wildcard $(DFT_DATA)/3x3x6/*/OUTCAR) $(wildcard $(DFT_DATA)/3x3x6/*/POSCAR.init)
 ACHIRAL        := $(DFT_BUILD)/achiral_3x3x6.csv
+CLASSES_336    := $(DFT_BUILD)/classes_3x3x6.csv
 
 # ---- structural order-parameter reference values (SI table) ----
 OP_REFS := build/structural_ops/op_reference_values.csv
@@ -70,8 +71,8 @@ CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
 
-.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral refs fe2seo ce cedft figures clean
-all: figures refs r2scan tao2f electrostatics twins achiral fe2seo ce cedft
+.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes refs fe2seo ce cedft figures clean
+all: figures refs r2scan tao2f electrostatics twins achiral classes fe2seo ce cedft
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -142,6 +143,13 @@ achiral: $(ACHIRAL)
 
 $(ACHIRAL): $(ACHIRAL_INPUTS) $(DFT_OPS) $(CE_MODEL) methods/dft/enumerate_3x3x6.py methods/dft/build_stackings.py workflow/dft/achiral_3x3x6.py
 	cd workflow/dft && $(PY) achiral_3x3x6.py
+
+## classes: every arrangement on the 3x3x6 cell that obeys both rules, grouped into
+## symmetry classes, with the CE energy of each class
+classes: $(CLASSES_336)
+
+$(CLASSES_336): $(ORBIT_REPS) $(CE_MODEL) methods/dft/enumerate_3x3x6.py methods/dft/build_stackings.py workflow/dft/classes_3x3x6.py
+	cd workflow/dft && $(PY) classes_3x3x6.py
 
 # ===== structural order-parameter references =====
 ## refs: ground-state and random-limit reference values for the SI table.
