@@ -27,7 +27,6 @@ plt.rcParams["pdf.fonttype"] = 42
 LW, FS, SYM = 0.7, 8.5, 12   # line width, fontsize, symbol size
 plt.rcParams.update({k: FS for k in ("font.size", "axes.labelsize", "axes.titlesize",
                                      "xtick.labelsize", "ytick.labelsize")})
-LABELPAD = 8
 BOX = 1.24                    # panel side (inches), as in fig_dft_coherence
 MARGIN = 2                    # pairs beyond the data at each end of the x axis
 HERE = Path(__file__).resolve().parent
@@ -57,8 +56,8 @@ ax.set_xlim(xs)
 ax.set_ylim(intercept + slope * xs)                # the fit runs corner to corner
 ax.set_xticks(range(0, int(x.max()) + 1, 6))
 ax.set_yticks(np.arange(0, 2.01, 0.5))           # as in fig_dft_coherence (b)
-ax.set_xlabel("side-by-side F pairs\nper 3×3×3 cell", labelpad=LABELPAD)
-ax.set_ylabel("energy  (meV/atom)", labelpad=LABELPAD)
+ax.set_xlabel("side-by-side F pairs\nper 3×3×3 cell")
+ax.set_ylabel("energy  (meV/atom)")
 
 for ext in ("png", "pdf"):
     fig.savefig(OUT / f"fig_si_electrostatics.{ext}", dpi=300)
