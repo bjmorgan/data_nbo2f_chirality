@@ -75,9 +75,10 @@ CE_TRAIN := data/ce/training_set_refitB_n96.json
 CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
+CE_BOUND  := build/ce/ce_window_bound.csv
 
-.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree refs fe2seo ce cedft figures clean
-all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree fe2seo ce cedft
+.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree refs fe2seo ce cedft cebound figures clean
+all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree fe2seo ce cedft cebound
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -226,6 +227,14 @@ cedft: $(CE_VS_DFT)
 $(CE_VS_DFT): $(CE_TRAIN) $(CE_MODEL) $(DFT_OPS) $(ORBIT_REPS) $(wildcard $(DFT_DATA)/3x3x3/config_*/OUTCAR) $(ACHIRAL_INPUTS) methods/cluster_expansion/ce_fit.py workflow/ce/ce_vs_dft.py
 	@mkdir -p $(dir $@)
 	cd workflow/ce && $(PY) ce_vs_dft.py
+
+## cebound: the window bound showing that, among arrangements that obey both rules,
+## P3_121 has the lowest cluster-expansion energy on any cell
+cebound: $(CE_BOUND)
+
+$(CE_BOUND): $(CE_MODEL) $(ORBIT_REPS) methods/dft/enumerate_3x3x6.py methods/dft/build_stackings.py workflow/ce/ce_window_bound.py
+	@mkdir -p $(dir $@)
+	cd workflow/ce && $(PY) ce_window_bound.py
 
 # ===== figures =====
 figures: figures/fig_finite_temperature.pdf figures/fig_si_pe_size.pdf \
