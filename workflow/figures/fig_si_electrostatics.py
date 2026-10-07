@@ -66,6 +66,7 @@ cb = fig.colorbar(sc, cax=ax.inset_axes([1.05, 0, 0.045, 1]))   # follows the sq
 cb.set_ticks([0.25, 0.5, 0.75, 1.0])
 cb.set_label("inter-chain coherence", labelpad=4)
 cb.outline.set_linewidth(LW)
+cb.ax.invert_yaxis()                               # high coherence at the bottom, beside P3_121
 
 fig.tight_layout()
 for ext in ("png", "pdf"):
