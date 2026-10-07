@@ -58,6 +58,7 @@ CLASSES_336    := $(DFT_BUILD)/classes_3x3x6.csv
 CIS_NONOOF     := $(DFT_BUILD)/cis_nonoof_3x3x6.csv
 CIS_COUNT      := $(DFT_BUILD)/cis_count.csv
 CIS_SEARCH     := $(DFT_BUILD)/cis_classes_3x3x6.csv
+PAIR_FREE      := $(DFT_BUILD)/pair_free.csv
 
 # ---- structural order-parameter reference values (SI table) ----
 OP_REFS := build/structural_ops/op_reference_values.csv
@@ -75,8 +76,8 @@ CE_MODEL := data/ce/paircut9_5_5_ardr_n96.ce
 CE_LOOCV := build/ce/loocv.csv
 CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
 
-.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch refs fe2seo ce cedft figures clean
-all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch fe2seo ce cedft
+.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree refs fe2seo ce cedft figures clean
+all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree fe2seo ce cedft
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -177,6 +178,13 @@ cissearch: $(CIS_SEARCH)
 
 $(CIS_SEARCH): $(CE_MODEL) $(wildcard $(DFT_DATA)/3x3x6/*/POSCAR.init) methods/dft/cis_3x3x6.py methods/dft/build_stackings.py workflow/dft/cis_search_3x3x6.py
 	cd workflow/dft && $(PY) cis_search_3x3x6.py
+
+## pairfree: the rule-obeying arrangements with no side-by-side fluoride pairs, on the
+## 3x3x6 cell, on larger periodic cells and on open windows of the infinite lattice
+pairfree: $(PAIR_FREE)
+
+$(PAIR_FREE): $(ORBIT_REPS) methods/dft/pair_free.py methods/dft/enumerate_3x3x6.py methods/dft/build_stackings.py workflow/dft/pair_free_search.py
+	cd workflow/dft && $(PY) pair_free_search.py
 
 # ===== structural order-parameter references =====
 ## refs: ground-state and random-limit reference values for the SI table.
