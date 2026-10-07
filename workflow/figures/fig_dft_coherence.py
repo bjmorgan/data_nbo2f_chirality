@@ -1,7 +1,8 @@
 """DFT energetics of the anion orderings (NbO2F, 3x3x3 demonstration; sec:dft).
 
-(a) DFT energy by ensemble -- the two ordering energy scales: a large gain on
-    period-3 OOF ordering, a small further gain on cis-locking.
+(a) DFT energy by ensemble (44 random, 33 OOF with random inter-chain phases, and
+    the twelve cis+OOF orbits, one point each) -- the two ordering energy scales: a
+    large gain on period-3 OOF ordering, a small further gain on cis-locking.
 (b) DFT energy vs inter-chain coherence among the cis+OOF orbits -- energy
     falls with coherence, selecting the maximally-coherent P3_121 ground state.
 
@@ -31,6 +32,10 @@ if not CSV.exists():
 df = pd.read_csv(CSV)
 df["dE"] = (df["energy_per_atom"] - df["energy_per_atom"].min()) * 1000.0  # meV/atom above the GS
 
+# one point per cis+OOF orbit: an orbit computed in two settings keeps its lower-energy one
+ENSEMBLE = {cls: df[df.cls == cls] for cls in ("random", "OOF-random-phase")}
+ENSEMBLE["orbit"] = df[df.cls == "orbit"].sort_values("dE").drop_duplicates("orbit")
+
 CLS = [("random", "random", T["grey"]),
        ("OOF-random-phase", "OOF only", T["blue"]),
        ("orbit", "cis + OOF", T["red"])]
@@ -44,7 +49,7 @@ for ax in (axA, axB):
 rng = np.random.default_rng(0)
 med = {}
 for xi, (cls, lab, c) in enumerate(CLS):
-    e = df[df.cls == cls]["dE"].to_numpy()
+    e = ENSEMBLE[cls]["dE"].to_numpy()
     axA.scatter(xi + rng.uniform(-0.16, 0.16, len(e)), e, s=SYM, color=c, edgecolors="none")
     med[cls] = float(np.median(e))
     axA.plot([xi - 0.28, xi + 0.28], [med[cls], med[cls]], color="black", lw=RLW, zorder=4)
@@ -59,7 +64,7 @@ axA.set_ylabel("energy  (meV/atom)")
 axA.set_title("(a)")
 
 # (b) energy vs inter-chain coherence among the orbits
-o = df[df.cls == "orbit"].drop_duplicates("orbit")   # one point per symmetry orbit (drops enantiomer duplicates)
+o = ENSEMBLE["orbit"]
 axB.scatter(o["icoh"], o["dE"], s=SYM, color=T["red"], edgecolors="none", zorder=3)
 gs = o.loc[o["dE"].idxmin()]   # P3_121: lowest energy, coherence = 1 (same symbol)
 axB.annotate(r"$\mathrm{P3_121}$", (gs["icoh"], gs["dE"]),

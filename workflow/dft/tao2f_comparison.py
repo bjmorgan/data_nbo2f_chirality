@@ -9,7 +9,7 @@ from the period-three random-phase and random tiers.
 Writes tao2f_comparison.csv: for each configuration, its tier, its orbit (-1
 outside the orbit tier), and its energy above the lowest configuration of the set
 in each compound (meV/atom). Prints the median energy of each tier in each
-compound, the orbit energies relative to orbit 11, the Spearman rank correlation
+compound (each orbit counted once, at its lower setting), the orbit energies relative to orbit 11, the Spearman rank correlation
 of the orbit energies between the two compounds, and the energy difference
 between the two orbit-11 settings.
 
@@ -61,9 +61,13 @@ def main() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUT, index=False, float_format="%.6f")
 
-    print("median energy of each tier (meV/atom above the lowest configuration):")
-    medians = df.groupby("tier", observed=True)[["tao2f_meV_per_atom", "nbo2f_meV_per_atom"]].median()
-    print(medians.to_string(float_format=lambda x: f"{x:.2f}"))
+    print("median energy of each tier (meV/atom above the lowest configuration; each orbit once):")
+    medians = {}
+    for col in ("tao2f_meV_per_atom", "nbo2f_meV_per_atom"):
+        orbit_tier = df[df.tier == "orbit"].sort_values(col).drop_duplicates("orbit")   # lower of two settings
+        tiers = pd.concat([df[df.tier != "orbit"], orbit_tier])
+        medians[col] = tiers.groupby("tier", observed=True)[col].median()
+    print(pd.DataFrame(medians).to_string(float_format=lambda x: f"{x:.2f}"))
 
     orbits = df[df.tier == "orbit"].groupby("orbit")[["tao2f_meV_per_atom", "nbo2f_meV_per_atom"]].min()
     orbits = (orbits - orbits.loc[11]).sort_values("nbo2f_meV_per_atom")

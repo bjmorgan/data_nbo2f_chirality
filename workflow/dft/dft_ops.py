@@ -101,9 +101,12 @@ def main() -> None:
     print(f"wrote {out}  ({len(df)} configs)\n")
 
     # Energy spread of each ordering class, relative to the lowest-energy
-    # structure -- the tiers quoted in the results text.
+    # structure -- the tiers quoted in the results text. Each cis+OOF orbit counts
+    # once, at the lower-energy configuration where it was computed in two settings.
     df["dE_meV"] = (df.energy_per_atom - df.energy_per_atom.min()) * 1000.0
-    summary = (df.groupby("cls")["dE_meV"]
+    orbits = df[df.cls == "orbit"].sort_values("dE_meV").drop_duplicates("orbit")
+    tiers = pd.concat([df[df.cls != "orbit"], orbits])
+    summary = (tiers.groupby("cls")["dE_meV"]
                  .agg(n="count", median="median", min="min", max="max")
                  .reset_index()
                  .sort_values("median"))
