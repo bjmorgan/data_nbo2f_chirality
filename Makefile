@@ -243,7 +243,7 @@ figures/fig_si_pe_size.pdf: $(CANON) workflow/figures/fig_si_pe_size.py
 figures/fig_si_ce_vs_dft.pdf: $(CE_VS_DFT) workflow/figures/fig_si_ce_vs_dft.py
 	cd workflow/figures && $(PY) fig_si_ce_vs_dft.py
 
-figures/fig_si_electrostatics.pdf: $(ELECTROSTATICS) $(DFT_OPS) workflow/figures/fig_si_electrostatics.py
+figures/fig_si_electrostatics.pdf: $(ELECTROSTATICS) workflow/figures/fig_si_electrostatics.py
 	cd workflow/figures && $(PY) fig_si_electrostatics.py
 
 figures/fig_dft_coherence.pdf: $(DFT_OPS) workflow/figures/fig_dft_coherence.py
