@@ -3,7 +3,8 @@
 DFT energy in meV/atom above P3_121 (one point per orbit, the lower-energy setting where
 an orbit was computed in two, as in fig_dft_coherence) against the number of fluoride
 pairs side by side on neighbouring parallel chains in the 3x3x3 cell, which fixes the
-point-charge energy. The line is the least-squares fit, with its R^2 on the panel.
+point-charge energy. The line is the least-squares fit, with its R^2 on the panel; the
+axes are square, with limits that put the fit on the diagonal.
 Points are coloured by inter-chain coherence.
 
 Reads build/dft/orbit_electrostatics.csv and build/dft/dft_ops.csv. Fonts are embedded
@@ -23,6 +24,7 @@ plt.rcParams["mathtext.fontset"] = "custom"
 plt.rcParams["mathtext.rm"] = "Helvetica Neue"
 plt.rcParams["pdf.fonttype"] = 42
 LW, FS, SYM = 0.7, 8.5, 12   # line width, fontsize, symbol size
+LABELPAD = 8
 plt.rcParams.update({k: FS for k in ("font.size", "axes.labelsize", "axes.titlesize",
                                      "xtick.labelsize", "ytick.labelsize")})
 HERE = Path(__file__).resolve().parent
@@ -42,7 +44,8 @@ x, y = df.side_by_side_pairs, df.dft_meV_per_atom
 slope, intercept = np.polyfit(x, y, 1)
 r2 = np.corrcoef(x, y)[0, 1] ** 2
 
-fig, ax = plt.subplots(figsize=(3.7, 2.6))
+fig, ax = plt.subplots(figsize=(3.5, 3.05))
+ax.set_box_aspect(1)
 xs = np.array([-1, x.max() + 1])
 ax.plot(xs, intercept + slope * xs, color="0.6", lw=LW, ls="--", zorder=1)
 sc = ax.scatter(x, y, c=df.icoh, cmap="viridis", vmin=0, vmax=1, s=SYM * 1.5, edgecolors="none", zorder=3)
@@ -51,10 +54,11 @@ ax.annotate(r"$\mathrm{P3_121}$", (gs.side_by_side_pairs, gs.dft_meV_per_atom),
             textcoords="offset points", xytext=(4, 2), ha="left", fontsize=FS)
 ax.text(0.04, 0.96, f"R² = {r2:.2f}", transform=ax.transAxes, ha="left", va="top", fontsize=FS)
 ax.set_xlim(xs)
+ax.set_ylim(intercept + slope * xs)                # the fit runs corner to corner
 ax.set_xticks(range(0, int(x.max()) + 1, 3))
-ax.set_xlabel("side-by-side F pairs per 3×3×3 cell")
-ax.set_ylabel("energy  (meV/atom)")
-cb = fig.colorbar(sc, ax=ax, pad=0.03, aspect=25)
+ax.set_xlabel("side-by-side F pairs per 3×3×3 cell", labelpad=LABELPAD)
+ax.set_ylabel("energy  (meV/atom)", labelpad=LABELPAD)
+cb = fig.colorbar(sc, cax=ax.inset_axes([1.05, 0, 0.045, 1]))   # follows the square box
 cb.set_label("inter-chain coherence", labelpad=4)
 cb.outline.set_linewidth(LW)
 
