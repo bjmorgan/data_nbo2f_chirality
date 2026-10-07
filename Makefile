@@ -231,7 +231,8 @@ $(CE_VS_DFT): $(CE_TRAIN) $(CE_MODEL) $(DFT_OPS) $(ORBIT_REPS) $(wildcard $(DFT_
 figures: figures/fig_finite_temperature.pdf figures/fig_si_pe_size.pdf \
          figures/fig_dft_coherence.pdf figures/fig_orbit_gallery.pdf \
          figures/fig_p3121_structure.pdf figures/fig_p3121_legend.pdf \
-         figures/fig_reo3_parent.pdf figures/fig_si_ce_vs_dft.pdf
+         figures/fig_reo3_parent.pdf figures/fig_si_ce_vs_dft.pdf \
+         figures/fig_si_electrostatics.pdf
 
 figures/fig_finite_temperature.pdf: $(RWL_BUILD)/tc_estimators.csv $(RWL_BUILD)/fss_fit.txt $(CANON) workflow/figures/fig_finite_temperature.py
 	cd workflow/figures && $(PY) fig_finite_temperature.py
@@ -241,6 +242,9 @@ figures/fig_si_pe_size.pdf: $(CANON) workflow/figures/fig_si_pe_size.py
 
 figures/fig_si_ce_vs_dft.pdf: $(CE_VS_DFT) workflow/figures/fig_si_ce_vs_dft.py
 	cd workflow/figures && $(PY) fig_si_ce_vs_dft.py
+
+figures/fig_si_electrostatics.pdf: $(ELECTROSTATICS) $(DFT_OPS) workflow/figures/fig_si_electrostatics.py
+	cd workflow/figures && $(PY) fig_si_electrostatics.py
 
 figures/fig_dft_coherence.pdf: $(DFT_OPS) workflow/figures/fig_dft_coherence.py
 	cd workflow/figures && $(PY) fig_dft_coherence.py
