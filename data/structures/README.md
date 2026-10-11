@@ -2,7 +2,7 @@
 
 This directory contains the structure files the analysis reads: the enumerated
 anion orderings, reference settings of the ground state, and the published
-structure of &beta;-Fe<sub>2</sub>SeO.
+structures of &beta;-Fe<sub>2</sub>SeO, BaZnO<sub>2</sub> and BaCoO<sub>2</sub>.
 
 - `orbit_representatives/`: One representative of each of the twelve
   symmetry-distinct anion orderings that satisfy both ordering rules (cis
@@ -31,9 +31,22 @@ structure of &beta;-Fe<sub>2</sub>SeO.
   NbO<sub>2</sub>F, so its iron/vacancy order can be compared directly with the
   twelve orbits (`workflow/structures/fe2seo_orbit_match.py`).
 
+- `bazno2_type/`: Published structures of BaZnO<sub>2</sub> and BaCoO<sub>2</sub>,
+  from the Crystallography Open Database, named `COD<id>_<compound>_<first
+  author><year>.cif`: BaZnO<sub>2</sub> from von Schnering et al. \[2\] (COD
+  1540010) and BaZnO<sub>2</sub> and BaCoO<sub>2</sub> from Spitsbergen \[3\]
+  (COD 2310968 and 2310969). These are oxygen-deficient perovskites in which one
+  third of the anion sites are vacant. Their B (Zn or Co) and anion sites form the
+  same network as the Nb and anion sites of NbO<sub>2</sub>F, so their oxide/vacancy
+  order can be compared directly with the twelve orbits
+  (`workflow/structures/bazno2_orbit_match.py`).
+
 ## References
 
 1. I. K. Shamova et al., &ldquo;Two Ordered Magnetic States of
    &beta;-Fe<sub>2</sub>SeO Characterized by Spin Exchange Analysis and by X-ray
    Diffraction, Torque and Magnetization Measurements&rdquo;, *Chem. Mater.*
    **38**, 3727 (2026). doi:[10.1021/acs.chemmater.6c00310](https://doi.org/10.1021/acs.chemmater.6c00310).
+2. H. G. von Schnering, R. Hoppe and J. Zemann, *Z. Anorg. Allg. Chem.* **305**,
+   241 (1960).
+3. U. Spitsbergen, *Acta Crystallogr.* **13**, 197 (1960).

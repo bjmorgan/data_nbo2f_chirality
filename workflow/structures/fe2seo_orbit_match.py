@@ -87,16 +87,30 @@ def cubic_lattice(centres: np.ndarray, a0: float) -> tuple[np.ndarray, np.ndarra
     return sites, origin, lattice
 
 
-def minority_sites(atoms: Atoms, centre: str, majority: str) -> dict:
-    """Map a structure onto the 3x3x3 torus of bonds and test the two ordering rules."""
+def minority_sites(atoms: Atoms, centre: str, majority: str, frame: str | None = None) -> dict:
+    """Map a structure onto the 3x3x3 torus of bonds and test the two ordering rules.
+
+    By default the simple-cubic network is fitted to the centres themselves, which must
+    lie within TOL x (cubic lattice constant) of it. With `frame`, it is fitted to that
+    species instead, taken to sit at the cube corners (the A site of a perovskite); the
+    ideal centres are the cube centres, and each centre must fall in a different cube.
+    """
     centres = images(atoms, centre, 1)
-    a0 = (atoms.cell.volume / atoms.get_chemical_symbols().count(centre)) ** (1 / 3)
-    sites, origin, lattice = cubic_lattice(centres, a0)
+    if frame is None:
+        a0 = (atoms.cell.volume / atoms.get_chemical_symbols().count(centre)) ** (1 / 3)
+        sites, origin, lattice = cubic_lattice(centres, a0)
+    else:
+        a0 = (atoms.cell.volume / atoms.get_chemical_symbols().count(frame)) ** (1 / 3)
+        _, corner, lattice = cubic_lattice(images(atoms, frame, 1), a0)
+        origin = corner + 0.5 * lattice.sum(axis=0)
+        sites = np.rint((centres - origin) @ np.linalg.inv(lattice)).astype(int)
     a = float(np.mean(np.linalg.norm(lattice, axis=1)))
     ideal = origin + sites @ lattice
     centre_offsets = np.linalg.norm(centres - ideal, axis=1)
-    if centre_offsets.max() > TOL * a:
+    if frame is None and centre_offsets.max() > TOL * a:
         raise ValueError("centres do not sit on a simple-cubic network")
+    if frame is not None and len({tuple(x) for x in sites}) != len(sites):
+        raise ValueError("two centres fall in the same cube")
     majority_xyz = images(atoms, majority, 2)
     minority = {}                     # (axis, i, j, k) -> vertex holds the minority species
     periodic = True
@@ -123,7 +137,7 @@ def minority_sites(atoms: Atoms, centre: str, majority: str) -> dict:
     )
     return {
         "minority": minority, "periodic": periodic, "cis": cis, "chains": chains,
-        "a": a, "n_centres": len(centres), "max_centre_offset": float(centre_offsets.max()),
+        "a": a, "lattice": lattice, "n_centres": len(centres), "max_centre_offset": float(centre_offsets.max()),
         "max_occupied_offset": max(occupied_offsets), "min_vacant_clearance": min(vacant_clearances),
     }
 

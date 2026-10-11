@@ -68,6 +68,10 @@ OP_REFS := build/structural_ops/op_reference_values.csv
 # ---- beta-Fe2SeO against the twelve orbits ----
 FE2SEO_CIFS  := $(wildcard data/structures/beta_fe2seo/*.cif)
 FE2SEO_MATCH := build/structures/fe2seo_orbit_match.csv
+BAZNO2_CIFS  := $(wildcard data/structures/bazno2_type/*.cif)
+BAZNO2_MATCH := build/structures/bazno2_orbit_match.csv
+QTZ_NET      := build/structures/quartz_net.csv
+STACKINGS    := $(DFT_BUILD)/stackings_3x3x6.csv
 
 # ---- cluster expansion ----
 # The training set and the fitted model are committed, so that the deposit holds
@@ -79,8 +83,8 @@ CE_LOOCV := build/ce/loocv.csv
 CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
 CE_BOUND  := build/ce/ce_window_bound.csv
 
-.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 refs fe2seo ce cedft cebound figures clean
-all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 fe2seo ce cedft cebound
+.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 stackings refs fe2seo bazno2 qtz ce cedft cebound figures clean
+all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 stackings fe2seo bazno2 qtz ce cedft cebound
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -143,6 +147,12 @@ tao2f336: $(TAO2F_336)
 
 $(TAO2F_336): $(TAO2F_336_INPUTS) $(ACHIRAL_INPUTS) $(ACHIRAL) workflow/dft/tao2f_3x3x6.py
 	cd workflow/dft && $(PY) tao2f_3x3x6.py
+
+## stackings: which of the 64 per-plane stackings of the helix on the 3x3x6 cell are achiral
+stackings: $(STACKINGS)
+
+$(STACKINGS): $(CLASSES_336) $(ORBIT_REPS) methods/dft/enumerate_3x3x6.py methods/dft/build_stackings.py workflow/dft/stackings_3x3x6.py
+	cd workflow/dft && $(PY) stackings_3x3x6.py
 
 ## twins: the 3x3x6 stackings of the P3_121 helix, relative to the homochiral one,
 ## and the energy per twin boundary
@@ -212,6 +222,20 @@ fe2seo: $(FE2SEO_MATCH)
 
 $(FE2SEO_MATCH): $(FE2SEO_CIFS) $(ORBIT_REPS) workflow/structures/fe2seo_orbit_match.py
 	cd workflow/structures && $(PY) fe2seo_orbit_match.py
+
+## bazno2: map the published BaZnO2 and BaCoO2 structures onto the anion orderings and
+## identify the orbit
+bazno2: $(BAZNO2_MATCH)
+
+$(BAZNO2_MATCH): $(BAZNO2_CIFS) $(ORBIT_REPS) workflow/structures/fe2seo_orbit_match.py workflow/structures/bazno2_orbit_match.py
+	cd workflow/structures && $(PY) bazno2_orbit_match.py
+
+## qtz: the net of cations linked through their O, in P3_121 and in BaZnO2 and BaCoO2,
+## against quartz
+qtz: $(QTZ_NET)
+
+$(QTZ_NET): $(BAZNO2_CIFS) $(ORBIT_REPS) workflow/structures/quartz_net.py
+	cd workflow/structures && $(PY) quartz_net.py
 
 # ===== cluster expansion =====
 ## ce: DFT energies -> training set -> fitted model -> cross-validated RMSE,
