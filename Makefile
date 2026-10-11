@@ -47,6 +47,8 @@ ELECTROSTATICS := $(DFT_BUILD)/orbit_electrostatics.csv
 # ---- TaO2F against NbO2F on paired configurations ----
 TAO2F_OUTCARS := $(wildcard $(DFT_DATA)/TaO2F_3x3x3/config_*/OUTCAR)
 TAO2F         := $(DFT_BUILD)/tao2f_comparison.csv
+TAO2F_336_INPUTS := $(wildcard $(DFT_DATA)/TaO2F_3x3x6/*/OUTCAR) $(wildcard $(DFT_DATA)/TaO2F_3x3x6/*/POSCAR.init)
+TAO2F_336     := $(DFT_BUILD)/tao2f_3x3x6.csv
 
 # ---- 3x3x6: stackings of the P3_121 helix and every achiral arrangement ----
 STACK_OUTCARS  := $(wildcard $(DFT_DATA)/3x3x6/stack_*/OUTCAR)
@@ -77,8 +79,8 @@ CE_LOOCV := build/ce/loocv.csv
 CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
 CE_BOUND  := build/ce/ce_window_bound.csv
 
-.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree refs fe2seo ce cedft cebound figures clean
-all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree fe2seo ce cedft cebound
+.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 refs fe2seo ce cedft cebound figures clean
+all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 fe2seo ce cedft cebound
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -134,6 +136,13 @@ tao2f: $(TAO2F)
 
 $(TAO2F): $(TAO2F_OUTCARS) $(DFT_OPS) workflow/dft/tao2f_comparison.py
 	cd workflow/dft && $(PY) tao2f_comparison.py
+
+## tao2f336: TaO2F against NbO2F on the fifteen achiral 3x3x6 classes, each relative
+## to the homochiral helix in the same cell
+tao2f336: $(TAO2F_336)
+
+$(TAO2F_336): $(TAO2F_336_INPUTS) $(ACHIRAL_INPUTS) $(ACHIRAL) workflow/dft/tao2f_3x3x6.py
+	cd workflow/dft && $(PY) tao2f_3x3x6.py
 
 ## twins: the 3x3x6 stackings of the P3_121 helix, relative to the homochiral one,
 ## and the energy per twin boundary

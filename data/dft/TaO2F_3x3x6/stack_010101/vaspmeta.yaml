@@ -1,0 +1,7 @@
+title: TaO2F 3x3x6 stack_010101
+description: Full geometry optimisation of a 3x3x6 supercell of TaO2F
+notes: >-
+  The O/F arrangement of NbO2F 3x3x6/stack_010101 (C2/c), with Ta in place of Nb.
+  Started from the ideal structure (POSCAR.init), with the INCAR and KPOINTS of
+  the NbO2F 3x3x6 set.
+status: finished

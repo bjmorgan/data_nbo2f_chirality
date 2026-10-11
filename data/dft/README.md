@@ -1,8 +1,8 @@
 # Density-functional calculations
 
 This directory contains the VASP calculations of anion orderings in
-NbO<sub>2</sub>F, in four sets that serve different purposes, and a fifth set
-for TaO<sub>2</sub>F.
+NbO<sub>2</sub>F, in four sets that serve different purposes, and two sets for
+TaO<sub>2</sub>F.
 
 - `3x3x3/`: 92 configurations in the 3&times;3&times;3 supercell, spanning random
   anion placements, period-three orderings with random inter-chain phase, and the
@@ -54,6 +54,10 @@ for TaO<sub>2</sub>F.
   the period-three orderings with random inter-chain phase, chosen at evenly
   spaced quantiles of their NbO<sub>2</sub>F energies. They test whether the
   ordering rules and the ordering of the orbits carry over to a second compound.
+- `TaO2F_3x3x6/`: The fifteen achiral classes of `3x3x6/` and the homochiral
+  *P*3<sub>1</sub>21 ordering (`stack_000000`) in TaO<sub>2</sub>F. Each starts
+  from the ideal structure of the `3x3x6/` run of the same name, with Ta in place
+  of Nb, and has the same *k*-point mesh and numerical settings.
 
 The `3x3x3/` and `6x6x6/` sets use different *k*-point meshes and their energies
 are not directly comparable with each other.
