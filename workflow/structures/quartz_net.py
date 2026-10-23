@@ -6,11 +6,11 @@ builds that net for
 
   - the ideal P3_121 arrangement (data/structures/orbit_representatives, orbit 11),
     with Nb linked through O;
-  - the BaZnO2 and BaCoO2 refinements (data/structures/bazno2_type), with Zn or Co
-    linked through O;
+  - the BaZnO2 and BaCoO2 refinements of bazno2_orbit_match.py, with Zn or Co linked
+    through O;
   - alpha-quartz as the reference for the qtz net, with Si linked through O, built from
-    its space group (P3_221) and published cell and coordinates (Levien, Prewitt and
-    Weidner, Am. Mineral. 65, 920 (1980)),
+    its space group (P3_221) and its cell and coordinates at 1 atm (Levien, Prewitt and
+    Weidner, Am. Mineral. 65, 920 (1980), Tables 3 and 5),
 
 and computes for each its coordination sequence (the number of vertices 1 to SHELLS
 bonds away, and their cumulative sum) and its vertex symbol (for each pair of edges at a
@@ -34,10 +34,11 @@ from ase import Atoms
 from ase.io import read
 from ase.spacegroup import crystal
 
+from bazno2_orbit_match import refinements
+
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 ORBIT_11 = next((REPO / "data" / "structures" / "orbit_representatives").glob("orbit_11_*.vasp"))
-CIFS = REPO / "data" / "structures" / "bazno2_type"
 OUT = REPO / "build" / "structures" / "quartz_net.csv"
 SHELLS = 10
 CUTOFF = {"Si": 1.8, "Nb": 2.2, "Zn": 2.4, "Co": 2.4}     # node-O bond cutoff (A)
@@ -46,7 +47,7 @@ CUTOFF = {"Si": 1.8, "Nb": 2.2, "Zn": 2.4, "Co": 2.4}     # node-O bond cutoff (
 def alpha_quartz() -> Atoms:
     """Si on 3a (x, 0, 2/3) of P3_221 in its standard setting; the published O position shifted by the same 2/3 along c."""
     q = crystal(["Si", "O"], basis=[(0.4697, 0.0, 2 / 3), (0.4135, 0.2669, 0.1191 + 2 / 3)], spacegroup=154,
-                cellpar=[4.9134, 4.9134, 5.4052, 90, 90, 120])
+                cellpar=[4.916, 4.916, 5.4054, 90, 90, 120])
     assert q.get_chemical_formula() == "O6Si3"
     return q
 
@@ -154,10 +155,8 @@ def describe(name: str, atoms: Atoms, node: str) -> dict:
 def main() -> None:
     rows = [describe("alpha-quartz (qtz reference)", alpha_quartz(), "Si"),
             describe("P3_121 arrangement (orbit 11)", read(ORBIT_11, format="vasp"), "Nb")]
-    for f in sorted(CIFS.glob("COD*.cif")):
-        atoms = read(f)
-        b = next(s for s in ("Zn", "Co") if s in atoms.get_chemical_symbols())
-        rows.append(describe(f"Ba{b}O2 (COD {f.stem.split('_')[0][3:]})", atoms, b))
+    for ref in refinements():
+        rows.append(describe(f"{ref['compound']} ({ref['database_id']})", ref["atoms"], ref["B"]))
     ref = [rows[0][k] for k in rows[0] if k.startswith("shell_")] + [rows[0]["vertex_symbol"]]
     same = [[r[k] for k in r if k.startswith("shell_")] + [r["vertex_symbol"]] == ref for r in rows]
     print(f"same coordination sequence and vertex symbol as quartz: {all(same)}")

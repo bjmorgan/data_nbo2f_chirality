@@ -234,7 +234,7 @@ $(BAZNO2_MATCH): $(BAZNO2_CIFS) $(ORBIT_REPS) workflow/structures/fe2seo_orbit_m
 ## against quartz
 qtz: $(QTZ_NET)
 
-$(QTZ_NET): $(BAZNO2_CIFS) $(ORBIT_REPS) workflow/structures/quartz_net.py
+$(QTZ_NET): $(BAZNO2_CIFS) $(ORBIT_REPS) workflow/structures/fe2seo_orbit_match.py workflow/structures/bazno2_orbit_match.py workflow/structures/quartz_net.py
 	cd workflow/structures && $(PY) quartz_net.py
 
 # ===== cluster expansion =====
