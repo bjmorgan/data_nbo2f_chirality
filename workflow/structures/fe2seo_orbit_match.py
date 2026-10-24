@@ -8,9 +8,12 @@ maps the refined structure of beta-Fe2SeO onto the NbO2F labelling and compares
 it with the twelve cis + OOF orbit representatives of the 3x3x3 cell.
 
 Both materials pass through one routine. Each octahedron centre (Nb, or O in
-beta-Fe2SeO) is placed on the simple-cubic network of centres, and each of its
-six vertices is tested for the majority species (O, or Fe) within a quarter of
-the cubic lattice constant. A vertex with no majority atom holds the minority
+beta-Fe2SeO) is placed on a simple-cubic network, and each of its six vertices is
+tested for the majority species (O, or Fe) within a quarter of the cubic lattice
+constant. For the NbO2F orbit representatives the network is fitted to the centres
+themselves. For beta-Fe2SeO, an ABX2 antiperovskite (A = Se, B = O, X = Fe and
+vacancies), it is fitted to the Se atoms at the cube corners, and the ideal O sites
+are the cube centres, as for BaZnO2 and BaCoO2 (bazno2_orbit_match.py). A vertex with no majority atom holds the minority
 species (F, or a vacancy). For each structure the script then checks that
 
   - every centre has two minority vertices, in cis positions;
@@ -22,7 +25,10 @@ labellings under the full symmetry group of the parent 3x3x3 cell (48 point
 operations x 27 translations).
 
 Writes build/structures/fe2seo_orbit_match.csv, one row per temperature of the
-beta-Fe2SeO refinement.
+beta-Fe2SeO refinement: the fitted cube-axis lengths and the angles between them;
+whether the ordering rules hold and the matched orbit; the largest O offset from its
+ideal site, the largest Fe offset from its ideal vertex, and the shortest distance
+from any Fe to a vacant vertex.
 
     python fe2seo_orbit_match.py
 """
@@ -195,12 +201,16 @@ def main() -> None:
     rows = []
     for f in sorted(FE2SEO.glob("beta_Fe2SeO_*K.cif")):
         T = int(f.stem.split("_")[-1].rstrip("K"))
-        m = minority_sites(read(f), centre="O", majority="Fe")
+        m = minority_sites(read(f), centre="O", majority="Fe", frame="Se")
         ok = m["periodic"] and m["cis"] and m["chains"]
         idx, hm = orbits.get(canonical(labels(m["minority"])), (None, "")) if ok else (None, "")
+        lat = m["lattice"]
+        length = np.linalg.norm(lat, axis=1)
+        angles = [np.degrees(np.arccos(lat[i] @ lat[j] / (length[i] * length[j]))) for i, j in ((1, 2), (0, 2), (0, 1))]
         rows.append({
             "temperature_K": T,
-            "cubic_a_A": round(m["a"], 4),
+            "a1_A": round(length[0], 4), "a2_A": round(length[1], 4), "a3_A": round(length[2], 4),
+            "angle_23_deg": round(angles[0], 2), "angle_13_deg": round(angles[1], 2), "angle_12_deg": round(angles[2], 2),
             "O_checked": m["n_centres"],
             "cis_everywhere": m["cis"],
             "period_three": m["periodic"],
