@@ -71,6 +71,7 @@ FE2SEO_MATCH := build/structures/fe2seo_orbit_match.csv
 BAZNO2_CIFS  := $(wildcard data/structures/bazno2_type/*.cif)
 BAZNO2_MATCH := build/structures/bazno2_orbit_match.csv
 QTZ_NET      := build/structures/quartz_net.csv
+FE7SE8       := build/structures/fe7se8_okazaki.csv
 STACKINGS    := $(DFT_BUILD)/stackings_3x3x6.csv
 
 # ---- cluster expansion ----
@@ -83,8 +84,8 @@ CE_LOOCV := build/ce/loocv.csv
 CE_VS_DFT := build/ce/ce_vs_dft_low_energy.csv
 CE_BOUND  := build/ce/ce_window_bound.csv
 
-.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 stackings refs fe2seo bazno2 qtz ce cedft cebound figures clean
-all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 stackings fe2seo bazno2 qtz ce cedft cebound
+.PHONY: all rewl dft r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 stackings refs fe2seo bazno2 qtz fe7se8 ce cedft cebound figures clean
+all: figures refs r2scan tao2f electrostatics twins achiral classes cisnonoof ciscount cissearch pairfree tao2f336 stackings fe2seo bazno2 qtz fe7se8 ce cedft cebound
 
 # ===== REWL =====
 ## canonical: reweight microcanonical moments -> canonical <O>(T) on the 0.5 K grid
@@ -236,6 +237,12 @@ qtz: $(QTZ_NET)
 
 $(QTZ_NET): $(BAZNO2_CIFS) $(ORBIT_REPS) workflow/structures/fe2seo_orbit_match.py workflow/structures/bazno2_orbit_match.py workflow/structures/quartz_net.py
 	cd workflow/structures && $(PY) quartz_net.py
+
+## fe7se8: space groups of Okazaki's 3c and 4c iron-vacancy superstructures of Fe7Se8
+fe7se8: $(FE7SE8)
+
+$(FE7SE8): workflow/structures/fe7se8_okazaki.py
+	cd workflow/structures && $(PY) fe7se8_okazaki.py
 
 # ===== cluster expansion =====
 ## ce: DFT energies -> training set -> fitted model -> cross-validated RMSE,
